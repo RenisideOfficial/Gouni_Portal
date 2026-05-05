@@ -2,8 +2,10 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, AnimatePresence } from "framer-motion";
 import ActivationModal from "./ActivationModal";
+
+type Role = "student" | "staff" | "admin";
 
 const fadeUpVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -13,13 +15,35 @@ const fadeUpVariants: Variants = {
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isActivationModalOpen, setActivationModalOpen] = useState(false);
+  const [activeRole, setActiveRole] = useState<Role>("student");
+
+  // Dynamic configuration based on SRS User Classes
+  const roleConfig = {
+    student: {
+      label: "Log In",
+      title: "Welcome Back",
+      idPlaceholder: "Matric Number or Email",
+      image: "/images/student_studying.jpg",
+    },
+    staff: {
+      label: "Staff Portal",
+      title: "Staff Login",
+      idPlaceholder: "Staff ID or Email",
+      image: "/images/staff_login_bg.jpg",
+    },
+    admin: {
+      label: "Management",
+      title: "Admin Access",
+      idPlaceholder: "Admin ID or Email",
+      image: "/images/admin_login_bg.jpg",
+    },
+  };
 
   return (
     <>
-      <div className="min-h-screen w-full flex bg-background transition-colors duration-300">
+      <div className="min-h-screen w-full flex bg-background transition-colors duration-300 overflow-hidden">
         {/* Left Form Side */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 lg:px-32 relative">
-          {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -27,8 +51,7 @@ const Login = () => {
             className="absolute top-8 left-8 sm:top-12 sm:left-12">
             <Link
               href="/"
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
-              aria-label="Back to Home">
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -53,10 +76,9 @@ const Login = () => {
               show: { opacity: 1, transition: { staggerChildren: 0.1 } },
             }}
             className="w-full max-w-md mx-auto">
-            {/* Logo */}
             <motion.div
               variants={fadeUpVariants}
-              className="mb-10 text-center lg:text-left flex justify-center lg:justify-start">
+              className="mb-8 text-center lg:text-left flex justify-center lg:justify-start">
               <Link href="/">
                 <img
                   src="/images/gouni_logo.svg"
@@ -66,30 +88,65 @@ const Login = () => {
               </Link>
             </motion.div>
 
-            {/* Headers */}
+            {/* Role Switcher Toggle */}
             <motion.div
               variants={fadeUpVariants}
-              className="mb-8 text-center lg:text-left">
-              <span className="text-blue-700 dark:text-blue-400 font-bold text-xs tracking-widest uppercase">
-                Log In
-              </span>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground mt-2">
-                Welcome Back
-              </h1>
+              className="bg-muted p-1 rounded-xl flex mb-8 relative">
+              {(["student", "staff", "admin"] as Role[]).map((role) => (
+                <button
+                  key={role}
+                  onClick={() => setActiveRole(role)}
+                  className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider relative z-10 transition-colors ${
+                    activeRole === role ? "text-white" : "text-muted-foreground"
+                  }`}>
+                  {role}
+                </button>
+              ))}
+              <motion.div
+                layoutId="activeRoleTab"
+                className="absolute inset-y-1 bg-blue-900 dark:bg-blue-700 rounded-lg shadow-sm"
+                initial={false}
+                animate={{
+                  x:
+                    activeRole === "student"
+                      ? "0%"
+                      : activeRole === "staff"
+                        ? "100%"
+                        : "200%",
+                  width: "33.33%",
+                }}
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
             </motion.div>
 
-            {/* Form */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeRole}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.3 }}
+                className="mb-8 text-center lg:text-left">
+                <span className="text-blue-700 dark:text-blue-400 font-bold text-xs tracking-widest uppercase">
+                  {roleConfig[activeRole].label}
+                </span>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mt-2">
+                  {roleConfig[activeRole].title}
+                </h1>
+              </motion.div>
+            </AnimatePresence>
+
             <motion.form
               variants={fadeUpVariants}
               className="space-y-5"
               onSubmit={(e) => e.preventDefault()}>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Email Address
+                  Identification
                 </label>
                 <input
-                  type="email"
-                  placeholder="yourexample4@gmail.com"
+                  type="text"
+                  placeholder={roleConfig[activeRole].idPlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all placeholder:text-muted-foreground"
                 />
               </div>
@@ -118,19 +175,13 @@ const Login = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round">
-                      {showPassword ? (
-                        <>
-                          <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-                          <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                          <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                          <line x1="2" y1="2" x2="22" y2="22"></line>
-                        </>
-                      ) : (
-                        <>
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                          <circle cx="12" cy="12" r="3"></circle>
-                        </>
-                      )}
+                      <path
+                        d={
+                          showPassword
+                            ? "M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 22"
+                            : "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8M12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"
+                        }
+                      />
                     </svg>
                   </button>
                 </div>
@@ -157,25 +208,31 @@ const Login = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors mt-4">
-                Login
+                Sign In to Portal
               </motion.button>
             </motion.form>
 
-            <motion.div
-              variants={fadeUpVariants}
-              className="mt-8 text-center text-sm text-muted-foreground">
-              First time here?{" "}
-              <button
-                type="button"
-                onClick={() => setActivationModalOpen(true)}
-                className="text-blue-700 dark:text-blue-400 font-bold hover:underline focus:outline-none">
-                Activate Account
-              </button>
-            </motion.div>
+            <AnimatePresence>
+              {activeRole === "student" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-8 text-center text-sm text-muted-foreground">
+                  First time here?{" "}
+                  <button
+                    type="button"
+                    onClick={() => setActivationModalOpen(true)}
+                    className="text-blue-700 dark:text-blue-400 font-bold hover:underline focus:outline-none">
+                    Activate Account
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
 
-        {/* Right Image Side */}
+        {/* Right Image Side - Now Dynamic */}
         <div className="hidden lg:block lg:w-1/2 relative bg-muted overflow-hidden p-4">
           <motion.div
             initial={{ opacity: 0, scale: 1.05 }}
@@ -183,11 +240,18 @@ const Login = () => {
             transition={{ duration: 0.8 }}
             className="w-full h-full rounded-[2rem] overflow-hidden relative shadow-2xl">
             <div className="absolute inset-0 bg-blue-900/10 mix-blend-multiply z-10" />
-            <img
-              src="/images/student_studying.jpg"
-              alt="Student Studying"
-              className="w-full h-full object-cover"
-            />
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={activeRole}
+                src={roleConfig[activeRole].image}
+                alt={`${activeRole} workspace`}
+                initial={{ opacity: 0, filter: "blur(10px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(10px)" }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="w-full h-full object-cover"
+              />
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>
