@@ -1,11 +1,13 @@
 // src/components/pages/homes/Features.tsx
+"use client";
 import React from "react";
+import { motion, Variants } from "framer-motion";
 
 const featuresData = [
   {
     title: "Secure Login with OTP Verification",
     description:
-      "Access your account safely using encrypted authentication with optional OTP verification for an extra layer of protection against unauthorized access.",
+      "Access your account safely using encrypted authentication with optional OTP verification for an extra layer of protection.",
     illustration: (
       <div className="bg-white p-4 rounded-xl shadow-sm w-48 flex flex-col gap-2 border border-slate-100">
         <div className="text-center text-xs font-semibold text-slate-800 mb-1">
@@ -21,9 +23,9 @@ const featuresData = [
     ),
   },
   {
-    title: "Real-Time Payment Processing (Paystack)",
+    title: "Real-Time Payment Processing",
     description:
-      "Pay school fees and other charges easily through a secure gateway, with real-time status updates and instant confirmation after every transaction.",
+      "Pay school fees easily through a secure gateway, with real-time status updates and instant confirmation.",
     illustration: (
       <div className="bg-white p-5 rounded-2xl shadow-sm w-40 flex flex-col items-center justify-center gap-3 border border-slate-100">
         <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center text-white">
@@ -56,7 +58,6 @@ const featuresData = [
         <div className="flex gap-2">
           <div className="h-6 bg-blue-900 rounded-md w-2/3 flex items-center justify-center relative">
             <div className="h-1.5 w-8 bg-white/50 rounded-full"></div>
-            {/* Fake Cursor */}
             <svg
               className="absolute -bottom-3 -right-2 w-4 h-4 text-slate-800"
               fill="currentColor"
@@ -70,9 +71,9 @@ const featuresData = [
     ),
   },
   {
-    title: "Result Management & GPA Tracking",
+    title: "Result Management Tracking",
     description:
-      "View your semester results in detail and automatically track your GPA and CGPA as they are updated by academic staff.",
+      "View your semester results in detail and automatically track your GPA and CGPA as they are updated.",
     illustration: (
       <div className="bg-white p-3 rounded-xl shadow-sm w-56 border border-slate-100">
         <div className="grid grid-cols-4 gap-1 text-[8px] font-bold text-slate-500 mb-2 border-b pb-1">
@@ -95,7 +96,7 @@ const featuresData = [
   {
     title: "Clearance Tracking System",
     description:
-      "Follow your clearance progress across all required units, with clear status indicators and notifications for approvals or rejections.",
+      "Follow your clearance progress across all required units, with clear status indicators.",
     illustration: (
       <div className="bg-white p-3 rounded-xl shadow-sm w-48 border border-slate-100 flex flex-col gap-2">
         <div className="flex justify-between items-center text-[9px]">
@@ -125,7 +126,7 @@ const featuresData = [
   {
     title: "Hostel Booking & Allocation",
     description:
-      "Explore available hostel options, view room details, and book accommodation based on availability and confirmed payment status.",
+      "Explore available hostel options, view room details, and book accommodation based on availability.",
     illustration: (
       <div className="bg-white rounded-xl shadow-lg w-40 border border-slate-100 overflow-hidden text-[9px] text-center">
         <div className="py-2 border-b border-slate-100 text-slate-500 flex justify-center items-center gap-1">
@@ -142,12 +143,8 @@ const featuresData = [
               d="M19 9l-7 7-7-7"></path>
           </svg>
         </div>
-        <div className="py-1.5 text-slate-600 hover:bg-slate-50">
-          Sacred Heart
-        </div>
-        <div className="py-1.5 text-slate-600 hover:bg-slate-50">
-          Saint Francis Hostel
-        </div>
+        <div className="py-1.5 text-slate-600">Sacred Heart</div>
+        <div className="py-1.5 text-slate-600">Saint Francis Hostel</div>
         <div className="py-1.5 bg-blue-50 text-blue-700 font-medium relative">
           Regina Hostel
           <svg
@@ -157,37 +154,60 @@ const featuresData = [
             <path d="M7 2l12 11.2h-5.8l3.3 7.3-2.2.9-3.2-7.4-4.4 4.7z" />
           </svg>
         </div>
-        <div className="py-1.5 text-slate-600 hover:bg-slate-50">
-          Unity Hostel
-        </div>
+        <div className="py-1.5 text-slate-600">Unity Hostel</div>
       </div>
     ),
   },
 ];
 
+const gridVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
 const Features = () => {
   return (
     <section id="features" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16">
-          <span className="text-blue-700 font-medium tracking-wide text-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="mb-16">
+          <span className="text-blue-700 font-medium tracking-wide text-sm uppercase">
             Features
           </span>
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2">
             Everything You Need, In One Place
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div
+          variants={gridVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {featuresData.map((feature, index) => (
-            <div key={index} className="flex flex-col group">
-              {/* Illustration Top Half */}
-              <div className="bg-slate-100 rounded-t-3xl h-56 flex items-center justify-center p-6 border border-b-0 border-slate-200 overflow-hidden relative">
-                {feature.illustration}
+            <motion.div
+              variants={cardVariants}
+              key={index}
+              whileHover={{ y: -8 }}
+              className="flex flex-col group cursor-pointer">
+              <div className="bg-slate-50 rounded-t-3xl h-56 flex items-center justify-center p-6 border border-b-0 border-slate-200 overflow-hidden relative transition-colors duration-300 group-hover:bg-blue-50/50">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}>
+                  {feature.illustration}
+                </motion.div>
               </div>
-
-              {/* Text Bottom Half */}
-              <div className="bg-white border border-slate-200 border-t-0 rounded-b-3xl p-8 flex-grow">
+              <div className="bg-white border border-slate-200 border-t-0 rounded-b-3xl p-8 flex-grow transition-shadow duration-300 group-hover:shadow-lg">
                 <h3 className="text-lg font-bold text-slate-900 mb-3">
                   {feature.title}
                 </h3>
@@ -195,9 +215,9 @@ const Features = () => {
                   {feature.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

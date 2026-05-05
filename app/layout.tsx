@@ -52,10 +52,12 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn("font-sans", geist.variable)}>
-      <body className={`${inter.className}`} suppressHydrationWarning>
-        {/* Updated storageKey to match the new portal system */}
+      <body
+        className={`${inter.className} min-h-screen bg-white`}
+        suppressHydrationWarning>
         <ThemeProvider defaultTheme="system" storageKey="gouni-portal-theme">
           <AuthProvider>
+            {/* Notice Navbar and Footer are GONE from here */}
             {children}
             <Toaster position="top-right" richColors closeButton />
           </AuthProvider>

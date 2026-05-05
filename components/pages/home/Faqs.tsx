@@ -1,6 +1,7 @@
 // src/components/pages/homes/Faqs.tsx
 "use client";
 import React, { useState } from "react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 
 const faqData = [
   {
@@ -30,8 +31,35 @@ const faqData = [
   },
 ];
 
+const headingVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
+
+const faqItemVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1 },
+  }),
+};
+
+const accordionVariants: Variants = {
+  hidden: {
+    height: 0,
+    opacity: 0,
+    transition: { duration: 0.3, ease: "easeInOut" },
+  },
+  show: {
+    height: "auto",
+    opacity: 1,
+    transition: { duration: 0.3, ease: "easeInOut" },
+  },
+};
+
 const Faqs = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0); // First item open by default
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -41,9 +69,16 @@ const Faqs = () => {
     <section id="faqs" className="py-24 bg-white border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-16">
-          {/* Left Side: Heading */}
-          <div className="w-full lg:w-1/3">
-            <span className="text-blue-700 font-medium text-sm">FAQs</span>
+          {/* Left Side */}
+          <motion.div
+            variants={headingVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="w-full lg:w-1/3">
+            <span className="text-blue-700 font-medium tracking-wider uppercase text-sm">
+              FAQs
+            </span>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2 mb-4">
               Got Questions?
             </h2>
@@ -51,41 +86,53 @@ const Faqs = () => {
               Find quick answers to common questions about using the GO
               University Portal.
             </p>
-          </div>
+          </motion.div>
 
           {/* Right Side: Accordion */}
-          <div className="w-full lg:w-2/3">
-            <div className="space-y-4">
-              {faqData.map((faq, index) => {
-                const isOpen = openIndex === index;
-                return (
-                  <div
-                    key={index}
-                    className={`border rounded-lg overflow-hidden transition-all duration-200 ${isOpen ? "border-blue-900 shadow-sm" : "border-slate-200"}`}>
-                    <button
-                      onClick={() => toggleFaq(index)}
-                      className="w-full text-left px-6 py-5 flex justify-between items-center focus:outline-none">
-                      <span
-                        className={`font-medium ${isOpen ? "text-blue-900" : "text-slate-800"}`}>
-                        {faq.question}
-                      </span>
-                      <span
-                        className={`text-xl transition-transform duration-200 ${isOpen ? "text-blue-900 rotate-45" : "text-slate-400"}`}>
-                        +
-                      </span>
-                    </button>
+          <div className="w-full lg:w-2/3 space-y-4">
+            {faqData.map((faq, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <motion.div
+                  key={index}
+                  custom={index}
+                  variants={faqItemVariants}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className={`border rounded-lg overflow-hidden transition-colors duration-300 ${isOpen ? "border-blue-900 bg-blue-50/30" : "border-slate-200"}`}>
+                  <button
+                    onClick={() => toggleFaq(index)}
+                    className="w-full text-left px-6 py-5 flex justify-between items-center focus:outline-none">
+                    <span
+                      className={`font-medium ${isOpen ? "text-blue-900" : "text-slate-800"}`}>
+                      {faq.question}
+                    </span>
+                    <motion.span
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      className={`text-xl ${isOpen ? "text-blue-900" : "text-slate-400"}`}>
+                      +
+                    </motion.span>
+                  </button>
 
-                    {/* Animated height container */}
-                    <div
-                      className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-48 pb-5 opacity-100" : "max-h-0 opacity-0"}`}>
-                      <p className="text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4">
-                        {faq.answer}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        variants={accordionVariants}
+                        initial="hidden"
+                        animate="show"
+                        exit="hidden">
+                        <div className="px-6 pb-5">
+                          <p className="text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                            {faq.answer}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

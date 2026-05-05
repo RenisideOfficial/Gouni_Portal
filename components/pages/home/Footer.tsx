@@ -34,12 +34,12 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <img
-                src="/images/gouni-logo.png"
+                src="/images/gouni_logo.svg"
                 alt="Logo"
                 className="w-10 h-10 rounded-full"
               />
               <span className="font-bold text-lg text-slate-900">
-                Gouni Portal
+                Godfrey Okoye University
               </span>
             </div>
             <p className="text-slate-500 text-sm mb-2">

@@ -2,6 +2,21 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+
+const mobileMenuVariants: Variants = {
+  hidden: { height: 0, opacity: 0 },
+  visible: {
+    height: "auto",
+    opacity: 1,
+    transition: { duration: 0.3 },
+  },
+  exit: {
+    height: 0,
+    opacity: 0,
+    transition: { duration: 0.3 },
+  },
+};
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,44 +26,40 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo Section */}
-          <div className="flex-shrink-0 flex items-center gap-3">
-            <img
-              src="/images/gouni_logo.svg"
-              alt="GO University Seal"
-              className="h-12 w-12 object-contain rounded-full"
-            />
-          </div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex-shrink-0 flex items-center gap-3">
+            <Link href="/">
+              <img
+                src="/images/gouni_logo.svg"
+                alt="GO University Seal"
+                className="h-12 w-12 object-contain rounded-full cursor-pointer"
+              />
+            </Link>
+          </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className="text-slate-600 hover:text-blue-900 font-medium transition-colors">
-              Home
-            </Link>
-            <Link
-              href="#about"
-              className="text-slate-600 hover:text-blue-900 font-medium transition-colors">
-              About
-            </Link>
-            <Link
-              href="#features"
-              className="text-slate-600 hover:text-blue-900 font-medium transition-colors">
-              Features
-            </Link>
-            <Link
-              href="#faqs"
-              className="text-slate-600 hover:text-blue-900 font-medium transition-colors">
-              FAQs
-            </Link>
+            {["Home", "About", "Features", "FAQs"].map((item) => (
+              <Link
+                key={item}
+                href={item === "Home" ? "/" : `#${item.toLowerCase()}`}
+                className="text-slate-600 hover:text-blue-900 font-medium transition-colors relative group">
+                {item}
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-900 transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+            ))}
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:flex">
-            <Link
-              href="/auth/login"
-              className="bg-blue-900 text-white px-6 py-2.5 rounded-full font-medium hover:bg-blue-800 transition-colors shadow-sm">
-              Get Started
+            <Link href="/login" passHref>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-blue-900 text-white px-6 py-2.5 rounded-full font-medium shadow-sm cursor-pointer">
+                Get Started
+              </motion.div>
             </Link>
           </div>
 
@@ -84,37 +95,49 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link
-              href="/"
-              className="block px-3 py-2 text-slate-600 font-medium">
-              Home
-            </Link>
-            <Link
-              href="#about"
-              className="block px-3 py-2 text-slate-600 font-medium">
-              About
-            </Link>
-            <Link
-              href="#features"
-              className="block px-3 py-2 text-slate-600 font-medium">
-              Features
-            </Link>
-            <Link
-              href="#faqs"
-              className="block px-3 py-2 text-slate-600 font-medium">
-              FAQs
-            </Link>
-            <Link
-              href="/auth/login"
-              className="block px-3 py-2 text-blue-900 font-bold">
-              Get Started
-            </Link>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="md:hidden bg-white border-t border-slate-100 overflow-hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <Link
+                href="/"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-slate-600 font-medium">
+                Home
+              </Link>
+              <Link
+                href="#about"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-slate-600 font-medium">
+                About
+              </Link>
+              <Link
+                href="#features"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-slate-600 font-medium">
+                Features
+              </Link>
+              <Link
+                href="#faqs"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-slate-600 font-medium">
+                FAQs
+              </Link>
+              <Link
+                href="/auth/login"
+                onClick={() => setIsOpen(false)}
+                className="block px-3 py-2 text-blue-900 font-bold">
+                Get Started
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
