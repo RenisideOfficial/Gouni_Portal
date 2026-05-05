@@ -16,9 +16,35 @@ const Login = () => {
 
   return (
     <>
-      <div className="min-h-screen w-full flex bg-white">
+      <div className="min-h-screen w-full flex bg-background transition-colors duration-300">
         {/* Left Form Side */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 lg:px-32 relative">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute top-8 left-8 sm:top-12 sm:left-12">
+            <Link
+              href="/"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+              aria-label="Back to Home">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </Link>
+          </motion.div>
+
           <motion.div
             initial="hidden"
             animate="show"
@@ -44,10 +70,10 @@ const Login = () => {
             <motion.div
               variants={fadeUpVariants}
               className="mb-8 text-center lg:text-left">
-              <span className="text-blue-700 font-bold text-xs tracking-widest uppercase">
+              <span className="text-blue-700 dark:text-blue-400 font-bold text-xs tracking-widest uppercase">
                 Log In
               </span>
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mt-2">
                 Welcome Back
               </h1>
             </motion.div>
@@ -58,31 +84,30 @@ const Login = () => {
               className="space-y-5"
               onSubmit={(e) => e.preventDefault()}>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Email Address
                 </label>
                 <input
                   type="email"
                   placeholder="yourexample4@gmail.com"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-all placeholder:text-slate-400"
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all placeholder:text-muted-foreground"
                 />
               </div>
 
               <div className="relative">
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Password
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-all tracking-widest placeholder:tracking-normal"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all tracking-widest placeholder:tracking-normal placeholder:text-muted-foreground"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                    {/* Eye Icon SVG */}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="20"
@@ -115,15 +140,15 @@ const Login = () => {
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded border-slate-300 text-blue-900 focus:ring-blue-900"
+                    className="w-4 h-4 rounded border-input text-blue-900 focus:ring-blue-900"
                   />
-                  <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">
+                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                     Remember me
                   </span>
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-blue-700 font-semibold hover:text-blue-900 transition-colors">
+                  className="text-sm text-blue-700 dark:text-blue-400 font-semibold hover:text-blue-900 dark:hover:text-blue-300 transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -131,19 +156,19 @@ const Login = () => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3.5 bg-blue-900 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors mt-4">
+                className="w-full py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors mt-4">
                 Login
               </motion.button>
             </motion.form>
 
             <motion.div
               variants={fadeUpVariants}
-              className="mt-8 text-center text-sm text-slate-600">
+              className="mt-8 text-center text-sm text-muted-foreground">
               First time here?{" "}
               <button
                 type="button"
                 onClick={() => setActivationModalOpen(true)}
-                className="text-blue-700 font-bold hover:underline focus:outline-none">
+                className="text-blue-700 dark:text-blue-400 font-bold hover:underline focus:outline-none">
                 Activate Account
               </button>
             </motion.div>
@@ -151,7 +176,7 @@ const Login = () => {
         </div>
 
         {/* Right Image Side */}
-        <div className="hidden lg:block lg:w-1/2 relative bg-slate-100 overflow-hidden p-4">
+        <div className="hidden lg:block lg:w-1/2 relative bg-muted overflow-hidden p-4">
           <motion.div
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -167,7 +192,6 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Render the Activation Modal */}
       <ActivationModal
         isOpen={isActivationModalOpen}
         onClose={() => setActivationModalOpen(false)}

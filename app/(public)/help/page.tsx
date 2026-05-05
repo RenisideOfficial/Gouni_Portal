@@ -48,8 +48,8 @@ export default function HelpCenterPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-slate-900 mb-3">Help Center</h1>
-        <p className="text-slate-600">What do you need help with?</p>
+        <h1 className="text-4xl font-bold text-foreground mb-3">Help Center</h1>
+        <p className="text-muted-foreground">What do you need help with?</p>
       </motion.div>
 
       <motion.div
@@ -61,10 +61,13 @@ export default function HelpCenterPage() {
           <motion.div
             key={index}
             variants={itemVariants}
-            whileHover={{ scale: 1.01, borderColor: "#1E3A8A" }}
-            className="border border-slate-200 rounded-lg p-6 bg-white cursor-pointer transition-colors hover:shadow-sm">
-            <h3 className="font-semibold text-slate-900 mb-1">{topic.title}</h3>
-            <p className="text-sm text-slate-600">{topic.description}</p>
+            whileHover={{ scale: 1.02 }}
+            // Removed inline Framer Motion hex colors. Using Tailwind dark:hover classes instead
+            className="border border-border rounded-lg p-6 bg-card cursor-pointer transition-all duration-300 hover:shadow-md dark:hover:shadow-blue-900/10 hover:border-blue-900 dark:hover:border-blue-500">
+            <h3 className="font-semibold text-foreground mb-1">
+              {topic.title}
+            </h3>
+            <p className="text-sm text-muted-foreground">{topic.description}</p>
           </motion.div>
         ))}
       </motion.div>
@@ -74,8 +77,8 @@ export default function HelpCenterPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
         className="mt-16 text-center">
-        <p className="text-slate-600 mb-4">Still need help?</p>
-        <button className="bg-blue-900 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-800 transition-colors">
+        <p className="text-muted-foreground mb-4">Still need help?</p>
+        <button className="bg-blue-900 dark:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors">
           Contact Support
         </button>
       </motion.div>

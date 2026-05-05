@@ -1,4 +1,4 @@
-// components/providers/ThemeProvider.tsx
+// src/components/providers/ThemeProvider.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -26,7 +26,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "gou-verify-theme",
+  storageKey = "gouni_portal_theme", // Updated key
   ...props
 }: ThemeProviderProps) {
   // Initialize theme directly from localStorage to avoid hydration issues

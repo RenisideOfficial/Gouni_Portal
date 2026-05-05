@@ -132,7 +132,7 @@ const termsSections = [
       <p>
         User data is handled in accordance with the university's Privacy Policy
         and relevant data protection regulations, including the{" "}
-        <span className="text-blue-700 font-medium">
+        <span className="text-blue-700 dark:text-blue-400 font-medium">
           Nigeria Data Protection Regulation (NDPR)
         </span>
         .
@@ -167,10 +167,10 @@ export default function TermsOfServicePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="text-center mb-16">
-        <h1 className="text-4xl font-bold text-slate-900 mb-6">
+        <h1 className="text-4xl font-bold text-foreground mb-6">
           Terms of Service
         </h1>
-        <p className="text-slate-600 text-left md:text-center max-w-3xl mx-auto leading-relaxed">
+        <p className="text-muted-foreground text-left md:text-center max-w-3xl mx-auto leading-relaxed">
           Welcome to the Godfrey Okoye University Student Portal. These Terms of
           Service govern your access to and use of the portal and its services.
           By accessing or using the portal, you agree to comply with these
@@ -186,13 +186,13 @@ export default function TermsOfServicePage() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 border-t border-slate-100 pt-12 first:border-0 first:pt-0">
+            className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 border-t border-border pt-12 first:border-0 first:pt-0">
             <div className="md:col-span-4">
-              <h2 className="text-xl font-medium text-slate-900 sticky top-24">
+              <h2 className="text-xl font-medium text-foreground sticky top-24">
                 {section.title}
               </h2>
             </div>
-            <div className="md:col-span-8 text-slate-600 text-sm md:text-base leading-relaxed">
+            <div className="md:col-span-8 text-muted-foreground text-sm md:text-base leading-relaxed">
               {section.content}
             </div>
           </motion.div>

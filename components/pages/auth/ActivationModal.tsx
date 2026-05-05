@@ -9,13 +9,11 @@ interface ActivationModalProps {
   onClose: () => void;
 }
 
-// Added the : Variants type to explicitly tell TS this is for Framer Motion
 const backdropVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
 
-// Added the : Variants type here too
 const modalVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95, y: 20 },
   visible: {
@@ -43,11 +41,9 @@ const ActivationModal: React.FC<ActivationModalProps> = ({
     e.preventDefault();
     setIsActivating(true);
 
-    // Simulate API call validation delay
     setTimeout(() => {
       setIsActivating(false);
       onClose();
-      // Redirect to the multi-step registration wizard
       router.push("/register");
     }, 2000);
   };
@@ -56,29 +52,25 @@ const ActivationModal: React.FC<ActivationModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-0">
-          {/* Blurred Backdrop */}
           <motion.div
             variants={backdropVariants}
             initial="hidden"
             animate="visible"
             exit="hidden"
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           />
 
-          {/* Modal Content */}
           <motion.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
-            {/* Top Decoration */}
-            <div className="h-2 w-full bg-blue-900" />
+            className="relative w-full max-w-md bg-card rounded-3xl shadow-2xl border border-border overflow-hidden">
+            <div className="h-2 w-full bg-blue-900 dark:bg-blue-500" />
 
             <div className="p-8">
-              {/* Icon & Header */}
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-900 mb-6 mx-auto">
+              <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-900 dark:text-blue-400 mb-6 mx-auto">
                 <svg
                   className="w-7 h-7"
                   fill="none"
@@ -94,38 +86,37 @@ const ActivationModal: React.FC<ActivationModalProps> = ({
               </div>
 
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                <h2 className="text-2xl font-bold text-foreground mb-2">
                   Activate Account
                 </h2>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Enter your matriculation number and the activation token
                   provided by the ICT Directorate.
                 </p>
               </div>
 
-              {/* Activation Form */}
               <form onSubmit={handleActivate} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
                     Matriculation Number
                   </label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. GOU/26/1234"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-all uppercase placeholder:normal-case"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all uppercase placeholder:normal-case placeholder:text-muted-foreground"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
                     Activation Token
                   </label>
                   <input
                     type="text"
                     required
                     placeholder="Enter 8-digit token"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none transition-all tracking-widest font-mono"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all tracking-widest font-mono placeholder:text-muted-foreground"
                   />
                 </div>
 
@@ -134,13 +125,13 @@ const ActivationModal: React.FC<ActivationModalProps> = ({
                     type="button"
                     onClick={onClose}
                     disabled={isActivating}
-                    className="flex-1 py-3.5 bg-slate-100 text-slate-700 rounded-lg font-bold hover:bg-slate-200 transition-colors disabled:opacity-50">
+                    className="flex-1 py-3.5 bg-muted text-foreground rounded-lg font-bold hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors disabled:opacity-50">
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isActivating}
-                    className="flex-1 py-3.5 bg-blue-900 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors disabled:opacity-70 flex justify-center items-center gap-2">
+                    className="flex-1 py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors disabled:opacity-70 flex justify-center items-center gap-2">
                     {isActivating ? (
                       <>
                         <svg

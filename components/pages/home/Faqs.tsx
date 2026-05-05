@@ -66,7 +66,9 @@ const Faqs = () => {
   };
 
   return (
-    <section id="faqs" className="py-24 bg-white border-t border-slate-100">
+    <section
+      id="faqs"
+      className="py-24 bg-background border-t border-border transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Left Side */}
@@ -76,13 +78,13 @@ const Faqs = () => {
             whileInView="show"
             viewport={{ once: true }}
             className="w-full lg:w-1/3">
-            <span className="text-blue-700 font-medium tracking-wider uppercase text-sm">
+            <span className="text-blue-700 dark:text-blue-400 font-medium tracking-wider uppercase text-sm">
               FAQs
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-4">
               Got Questions?
             </h2>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed">
               Find quick answers to common questions about using the GO
               University Portal.
             </p>
@@ -100,17 +102,21 @@ const Faqs = () => {
                   initial="hidden"
                   whileInView="show"
                   viewport={{ once: true }}
-                  className={`border rounded-lg overflow-hidden transition-colors duration-300 ${isOpen ? "border-blue-900 bg-blue-50/30" : "border-slate-200"}`}>
+                  className={`border rounded-lg overflow-hidden transition-colors duration-300 ${
+                    isOpen
+                      ? "border-blue-900 dark:border-blue-500 bg-blue-50/30 dark:bg-blue-900/20"
+                      : "border-border"
+                  }`}>
                   <button
                     onClick={() => toggleFaq(index)}
                     className="w-full text-left px-6 py-5 flex justify-between items-center focus:outline-none">
                     <span
-                      className={`font-medium ${isOpen ? "text-blue-900" : "text-slate-800"}`}>
+                      className={`font-medium ${isOpen ? "text-blue-900 dark:text-blue-400" : "text-foreground"}`}>
                       {faq.question}
                     </span>
                     <motion.span
                       animate={{ rotate: isOpen ? 45 : 0 }}
-                      className={`text-xl ${isOpen ? "text-blue-900" : "text-slate-400"}`}>
+                      className={`text-xl ${isOpen ? "text-blue-900 dark:text-blue-400" : "text-muted-foreground"}`}>
                       +
                     </motion.span>
                   </button>
@@ -123,7 +129,7 @@ const Faqs = () => {
                         animate="show"
                         exit="hidden">
                         <div className="px-6 pb-5">
-                          <p className="text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                          <p className="text-muted-foreground text-sm leading-relaxed border-t border-border pt-4">
                             {faq.answer}
                           </p>
                         </div>

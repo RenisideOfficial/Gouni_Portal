@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-white pt-12 pb-8 border-t border-slate-100">
+    <footer className="bg-background pt-12 pb-8 border-t border-border transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Large Blue CTA Box */}
         <div className="bg-blue-900 rounded-3xl p-10 md:p-16 text-center mb-16 shadow-xl">
@@ -17,12 +17,12 @@ const Footer = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
-              href="/auth/login"
+              href="/login"
               className="bg-white text-blue-900 px-8 py-3 rounded-full font-bold hover:bg-slate-100 transition-colors">
               Login
             </Link>
             <Link
-              href="/auth/activate"
+              href="/login"
               className="bg-transparent border border-white text-white px-8 py-3 rounded-full font-bold hover:bg-blue-800 transition-colors">
               Activate Account
             </Link>
@@ -38,51 +38,67 @@ const Footer = () => {
                 alt="Logo"
                 className="w-10 h-10 rounded-full"
               />
-              <span className="font-bold text-lg text-slate-900">
+              <span className="font-bold text-lg text-foreground">
                 Godfrey Okoye University
               </span>
             </div>
-            <p className="text-slate-500 text-sm mb-2">
+            <p className="text-muted-foreground text-sm mb-2">
               Address: P.M.B 01014, Thinkers Corner, Enugu 400001, Enugu
             </p>
-            <p className="text-slate-500 text-sm">Email: info@gouni.edu.ng</p>
+            <p className="text-muted-foreground text-sm">
+              Email: info@gouni.edu.ng
+            </p>
           </div>
 
           <div>
-            <h4 className="font-bold text-slate-900 mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-slate-500 text-sm">
+            <h4 className="font-bold text-foreground mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-muted-foreground text-sm">
               <li>
-                <Link href="/">Home</Link>
+                <Link href="/" className="hover:text-foreground">
+                  Home
+                </Link>
               </li>
               <li>
-                <Link href="#features">Features</Link>
+                <Link href="#features" className="hover:text-foreground">
+                  Features
+                </Link>
               </li>
               <li>
-                <Link href="#about">About</Link>
+                <Link href="#about" className="hover:text-foreground">
+                  About
+                </Link>
               </li>
               <li>
-                <Link href="#support">Support</Link>
+                <Link href="#support" className="hover:text-foreground">
+                  Support
+                </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold text-slate-900 mb-4">Support</h4>
-            <ul className="space-y-2 text-slate-500 text-sm">
+            <h4 className="font-bold text-foreground mb-4">Support</h4>
+            <ul className="space-y-2 text-muted-foreground text-sm">
               <li>
-                <Link href="/help">Help Center</Link>
+                <Link href="/help" className="hover:text-foreground">
+                  Help Center
+                </Link>
               </li>
               <li>
-                <Link href="/privacy">Privacy Policy</Link>
+                <Link href="/privacy" className="hover:text-foreground">
+                  Privacy Policy
+                </Link>
               </li>
               <li>
-                <Link href="/terms">Terms of Use</Link>
+                <Link href="/terms" className="hover:text-foreground">
+                  Terms of Use
+                </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="text-center text-sm text-slate-400 border-t border-slate-100 pt-8">
+        <div className="text-center text-sm text-muted-foreground border-t border-border pt-8">
           © {new Date().getFullYear()} Godfrey Okoye University. All Right
           Reserved.
         </div>

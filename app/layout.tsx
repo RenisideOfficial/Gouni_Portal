@@ -1,4 +1,4 @@
-// app/layout.tsx
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import "./globals.css";
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: "GO University Portal",
     description:
       "Official student portal for Godfrey Okoye University. Access your academic records, fee payments, course registration, results, and hostel booking in one secure platform.",
-    url: "https://portal.gouni.edu.ng", // Updated to reflect a standard university portal URL
+    url: "https://portal.gouni.edu.ng",
     siteName: "GO University Portal",
     images: [
       {
@@ -53,11 +53,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("font-sans", geist.variable)}>
       <body
-        className={`${inter.className} min-h-screen bg-white`}
+        // Changed bg-white to bg-background text-foreground to fix the white text issue naturally
+        className={`${inter.className} min-h-screen bg-background text-foreground`}
         suppressHydrationWarning>
-        <ThemeProvider defaultTheme="system" storageKey="gouni-portal-theme">
+        <ThemeProvider defaultTheme="system" storageKey="gouni_portal_theme">
           <AuthProvider>
-            {/* Notice Navbar and Footer are GONE from here */}
             {children}
             <Toaster position="top-right" richColors closeButton />
           </AuthProvider>

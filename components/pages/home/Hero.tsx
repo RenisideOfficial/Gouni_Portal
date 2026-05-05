@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { AiFillStar } from "react-icons/ai";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -20,7 +20,7 @@ const itemVariants: Variants = {
 
 const Hero = () => {
   return (
-    <section className="relative w-full bg-white pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
+    <section className="relative w-full bg-background pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="flex flex-col items-center text-center"
@@ -31,10 +31,10 @@ const Hero = () => {
           <motion.div
             variants={itemVariants}
             className="flex md:flex md:flex-row flex-col gap-2 items-center space-x-2 mb-6">
-            <span className="text-blue-900">
+            <span className="text-blue-900 dark:text-blue-400">
               <AiFillStar />
             </span>
-            <p className="text-sm md:text-base font-medium text-blue-900 tracking-wide uppercase">
+            <p className="text-sm md:text-base font-medium text-blue-900 dark:text-blue-400 tracking-wide uppercase">
               One Portal. Every Student Service.
             </p>
           </motion.div>
@@ -42,7 +42,7 @@ const Hero = () => {
           {/* Main Headline */}
           <motion.h1
             variants={itemVariants}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight">
+            className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
             Your University, <br className="md:hidden" />
             <span className="relative inline-block px-4">
               Simplified.
@@ -50,7 +50,7 @@ const Hero = () => {
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
                 transition={{ duration: 1.2, delay: 0.8, ease: "easeInOut" }}
-                className="absolute -inset-x-1 -inset-y-2 w-full h-full text-blue-800"
+                className="absolute -inset-x-1 -inset-y-2 w-full h-full text-blue-800 dark:text-blue-500"
                 viewBox="0 0 250 100"
                 fill="none"
                 preserveAspectRatio="none">
@@ -69,7 +69,7 @@ const Hero = () => {
           {/* Description */}
           <motion.p
             variants={itemVariants}
-            className="max-w-2xl text-slate-600 text-lg md:text-xl mb-10 leading-relaxed">
+            className="max-w-2xl text-muted-foreground text-lg md:text-xl mb-10 leading-relaxed">
             Access your academic records, payments, results, and campus services
             — all in one secure platform.
           </motion.p>
@@ -82,16 +82,16 @@ const Hero = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-10 py-4 bg-blue-900 text-white font-semibold rounded-full hover:bg-blue-800 transition-colors shadow-lg cursor-pointer">
+                className="w-full sm:w-auto px-10 py-4 bg-blue-900 dark:bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition-colors shadow-lg cursor-pointer">
                 Login
               </motion.div>
             </Link>
-            <Link href="/activate" passHref>
+            <Link href="/register" passHref>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-10 py-4 border-2 border-blue-900 text-blue-900 font-semibold rounded-full hover:bg-blue-50 transition-colors cursor-pointer">
-                Activate Account
+                className="w-full sm:w-auto px-10 py-4 border-2 border-blue-900 dark:border-blue-500 text-blue-900 dark:text-blue-400 font-semibold rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors cursor-pointer">
+                Register As Student
               </motion.div>
             </Link>
           </motion.div>
@@ -99,12 +99,12 @@ const Hero = () => {
           {/* Background Illustration */}
           <motion.div
             variants={itemVariants}
-            className="mt-16 w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl border border-slate-100">
+            className="mt-16 w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl border border-border">
             <motion.div
               initial={{ scale: 1.1 }}
               animate={{ scale: 1 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="aspect-video bg-slate-100 relative group">
+              className="aspect-video bg-muted relative group">
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10" />
               <img
                 src="/images/hero_image.jpg"
