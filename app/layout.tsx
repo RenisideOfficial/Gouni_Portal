@@ -6,6 +6,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+import DatabaseSeeder from "@/components/pages/core/DatabaseSeeder";
+import CourseSeeder from "@/components/pages/core/CourseSeeder";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -58,6 +60,8 @@ export default function RootLayout({
         suppressHydrationWarning>
         <ThemeProvider defaultTheme="system" storageKey="gouni_portal_theme">
           <AuthProvider>
+            <DatabaseSeeder />
+            <CourseSeeder />
             {children}
             <Toaster position="top-right" richColors closeButton />
           </AuthProvider>

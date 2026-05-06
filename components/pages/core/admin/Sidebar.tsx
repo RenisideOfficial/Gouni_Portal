@@ -1,6 +1,6 @@
 // src/components/pages/core/admin/Sidebar.tsx
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,7 +24,6 @@ interface SidebarProps {
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
-  { name: "Admissions", href: "/dashboard/admin/admissions", icon: UserPlus },
   { name: "Staff Mgmt", href: "/dashboard/admin/staff", icon: Users },
   {
     name: "Student Mgmt",
@@ -41,6 +40,28 @@ const navLinks = [
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
+
+  // State to hold the dynamically fetched admin user data
+  const [adminUser, setAdminUser] = useState<{
+    name: string;
+    roleLevel: string;
+  } | null>(null);
+
+  // Fixed: Wrapped in setTimeout to prevent synchronous cascading renders
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const storedUser = localStorage.getItem("gouni_current_user");
+      if (storedUser) {
+        try {
+          setAdminUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Failed to parse current user data", error);
+        }
+      }
+    }, 0);
+
+    return () => clearTimeout(timer); // Cleanup
+  }, []);
 
   return (
     <>
@@ -80,9 +101,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             />
           </div>
           <h3 className="font-bold text-foreground text-center">
-            System Admin
+            {adminUser ? adminUser.name : "Loading..."}
           </h3>
-          <span className="text-xs text-muted-foreground mt-1">Management</span>
+          <span className="text-xs text-muted-foreground mt-1">
+            {adminUser ? adminUser.roleLevel || "Management" : "..."}
+          </span>
         </div>
 
         <div className="flex-1 py-6 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
@@ -116,7 +139,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <span className="text-sm">Help Center</span>
             </div>
           </Link>
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+          <button
+            onClick={() => {
+              localStorage.removeItem("gouni_current_user");
+              window.location.href = "/login";
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
             <LogOut className="w-5 h-5" />
             <span className="text-sm font-medium">Log out</span>
           </button>

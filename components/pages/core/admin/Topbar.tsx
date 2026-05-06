@@ -1,14 +1,33 @@
 // src/components/pages/core/admin/Topbar.tsx
 "use client";
-import React from "react";
-import { Search, Menu, Bell } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import Link from "next/link";
 
 interface TopbarProps {
   onOpenSidebar: () => void;
 }
 
 const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
+  const [adminUser, setAdminUser] = useState<{ avatar?: string } | null>(null);
+
+  // Fixed: Wrapped in setTimeout to prevent synchronous cascading renders
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const storedUser = localStorage.getItem("gouni_current_user");
+      if (storedUser) {
+        try {
+          setAdminUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Failed to parse current user", error);
+        }
+      }
+    }, 0);
+
+    return () => clearTimeout(timer); // Cleanup
+  }, []);
+
   return (
     <header className="h-20 flex-shrink-0 bg-background border-b border-border flex items-center justify-between px-4 sm:px-8 z-30 transition-colors duration-300">
       <button
@@ -27,18 +46,18 @@ const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
       </div>
 
       <div className="flex items-center gap-4 ml-auto">
-        <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
         <ThemeToggle />
-        <div className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden">
+
+        {/* Mobile Profile Display */}
+        <Link
+          href="/dashboard/admin/profile"
+          className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden block">
           <img
-            src="/images/admin_login_bg.jpg"
+            src={adminUser?.avatar || "/images/admin_login_bg.jpg"}
             alt="Profile"
             className="w-full h-full object-cover"
           />
-        </div>
+        </Link>
       </div>
     </header>
   );

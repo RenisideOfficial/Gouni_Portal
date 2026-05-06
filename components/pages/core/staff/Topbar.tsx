@@ -1,6 +1,6 @@
 // src/components/pages/core/staff/Topbar.tsx
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
@@ -10,6 +10,22 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
+  const [staffUser, setStaffUser] = useState<any>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const storedUser = localStorage.getItem("gouni_current_user");
+      if (storedUser) {
+        try {
+          setStaffUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Failed to parse current user", error);
+        }
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <header className="h-20 flex-shrink-0 bg-background border-b border-border flex items-center justify-between px-4 sm:px-8 z-30 transition-colors duration-300">
       <button
@@ -33,7 +49,7 @@ const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
           href="/dashboard/staff/profile"
           className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden">
           <img
-            src="/images/staff_login_bg.jpg"
+            src={staffUser?.avatar || "/images/staff_login_bg.jpg"}
             alt="Profile"
             className="w-full h-full object-cover"
           />

@@ -23,6 +23,7 @@ const Login = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Dynamic configuration based on SRS User Classes
   const roleConfig = {
@@ -46,8 +47,19 @@ const Login = () => {
     },
   };
 
+  const handleActivationSuccess = (regNumber: string) => {
+    setActiveRole("student");
+    setIdentifier(regNumber);
+    setPassword("");
+    setSuccessMessage(
+      "Account activated successfully! Please enter your password to log in.",
+    );
+    setTimeout(() => setSuccessMessage(""), 8000);
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     // Fetch users from our simulated LocalStorage Database
     const users = JSON.parse(localStorage.getItem("gouni_users") || "[]");
@@ -55,14 +67,15 @@ const Login = () => {
     // Find a user that matches the identifier, password, and active role tab
     let user = users.find(
       (u: any) =>
-        (u.email === identifier ||
-          u.regNumber === identifier ||
-          u.staffId === identifier ||
-          u.adminId === identifier) &&
+        (u.email?.toLowerCase() === identifier.toLowerCase() ||
+          u.regNumber?.toLowerCase() === identifier.toLowerCase() ||
+          u.staffId?.toLowerCase() === identifier.toLowerCase() ||
+          u.adminId?.toLowerCase() === identifier.toLowerCase()) &&
         u.password === password &&
         u.role === activeRole,
     );
 
+    // Fallbacks for the demo
     if (!user) {
       if (
         activeRole === "admin" &&
@@ -85,20 +98,43 @@ const Login = () => {
           role: "student",
           name: "Demo Student",
           regNumber: "GOU/U24/DEMO",
+          status: "Active",
+          isActivated: true,
         };
       }
     }
 
     if (user) {
+      // Logic guards for Student Accounts
+      if (user.role === "student") {
+        if (user.status === "Pending") {
+          setError("Your application is still pending administrator approval.");
+          return;
+        }
+        if (user.status === "Rejected") {
+          setError(
+            "Your application has been rejected. Please contact admissions.",
+          );
+          return;
+        }
+        if (user.status === "Suspended") {
+          setError(
+            "Your portal access has been suspended. Please contact the ICT Directorate.",
+          );
+          return;
+        }
+        if (!user.isActivated && user.activationToken) {
+          setError("You must activate your account first before logging in.");
+          setActivationModalOpen(true);
+          return;
+        }
+      }
+
       // Create session and redirect
       localStorage.setItem("gouni_current_user", JSON.stringify(user));
       router.push(`/dashboard/${activeRole}`);
     } else {
-      // Show error
-      setError(
-        "Invalid credentials. For the demo, you can use 'student', 'staff', or 'admin' as both ID and Password.",
-      );
-      setTimeout(() => setError(""), 6000);
+      setError("Invalid credentials. Please check your ID and Password.");
     }
   };
 
@@ -107,7 +143,6 @@ const Login = () => {
       <div className="min-h-screen w-full flex bg-background transition-colors duration-300 overflow-hidden">
         {/* Left Form Side */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 lg:px-32 relative">
-          {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -162,11 +197,10 @@ const Login = () => {
                   type="button"
                   onClick={() => {
                     setActiveRole(role);
-                    setError(""); // Clear errors when switching tabs
+                    setError("");
+                    setSuccessMessage("");
                   }}
-                  className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider relative z-10 transition-colors ${
-                    activeRole === role ? "text-white" : "text-muted-foreground"
-                  }`}>
+                  className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider relative z-10 transition-colors ${activeRole === role ? "text-white" : "text-muted-foreground"}`}>
                   {role}
                 </button>
               ))}
@@ -209,15 +243,24 @@ const Login = () => {
               variants={fadeUpVariants}
               className="space-y-5"
               onSubmit={handleLogin}>
-              {/* Error Message Display */}
+              {/* Message Display Area */}
               <AnimatePresence>
                 {error && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm text-center border border-red-100 dark:border-red-900/30">
+                    className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm text-center border border-red-100 dark:border-red-900/30 overflow-hidden">
                     {error}
+                  </motion.div>
+                )}
+                {successMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-3 rounded-lg text-sm text-center border border-green-100 dark:border-green-900/30 overflow-hidden">
+                    {successMessage}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -311,7 +354,10 @@ const Login = () => {
                   First time here?{" "}
                   <button
                     type="button"
-                    onClick={() => setActivationModalOpen(true)}
+                    onClick={() => {
+                      setError("");
+                      setActivationModalOpen(true);
+                    }}
                     className="text-blue-700 dark:text-blue-400 font-bold hover:underline focus:outline-none">
                     Activate Account
                   </button>
@@ -321,7 +367,7 @@ const Login = () => {
           </motion.div>
         </div>
 
-        {/* Right Image Side - Dynamic Crossfade */}
+        {/* Right Image Side */}
         <div className="hidden lg:block lg:w-1/2 relative bg-muted overflow-hidden p-4">
           <motion.div
             initial={{ opacity: 0, scale: 1.05 }}
@@ -348,6 +394,7 @@ const Login = () => {
       <ActivationModal
         isOpen={isActivationModalOpen}
         onClose={() => setActivationModalOpen(false)}
+        onSuccess={handleActivationSuccess}
       />
     </>
   );
