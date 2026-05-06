@@ -55,7 +55,7 @@ const Navbar = () => {
           {/* CTA Button & Theme Toggle */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
-            <Link href="/register" passHref>
+            <Link href="/login" passHref>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
