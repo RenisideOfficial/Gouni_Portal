@@ -69,7 +69,7 @@ To ensure this project remains a robust, zero-downtime presentation tool, all da
 **1. Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/gouni-portal.git
+git clone https://github.com/RenisideOfficial/gouni-portal.git
 ```
 
 **2. Install dependencies**
@@ -88,6 +88,12 @@ npm run dev
 
 ```
 http://localhost:3000
+```
+
+**5. Visit**
+
+```
+https://gouni.vercel.app
 ```
 
 ---
