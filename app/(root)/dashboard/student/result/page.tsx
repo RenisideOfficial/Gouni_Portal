@@ -1,9 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, BookOpen, AlertCircle, Award } from "lucide-react";
+import {
+  Search,
+  Loader2,
+  BookOpen,
+  AlertCircle,
+  Award,
+  Printer,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function ResultPage() {
+  const router = useRouter();
   const [session, setSession] = useState("2025/2026");
   const [semester, setSemester] = useState("1st Semester");
 
@@ -12,11 +21,16 @@ export default function ResultPage() {
   const [results, setResults] = useState<any[]>([]);
   const [studentInfo, setStudentInfo] = useState<any>(null);
 
+  // FIX: Wrapped in setTimeout to prevent synchronous setState cascading renders
   useEffect(() => {
-    const user = JSON.parse(
-      localStorage.getItem("gouni_current_user") || "null",
-    );
-    setStudentInfo(user);
+    const loadStudentInfo = () => {
+      const user = JSON.parse(
+        localStorage.getItem("gouni_current_user") || "null",
+      );
+      setStudentInfo(user);
+    };
+    const timer = setTimeout(loadStudentInfo, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const calculateGrade = (ca: number, exam: number) => {
@@ -94,42 +108,63 @@ export default function ResultPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Award className="text-blue-600" /> Academic Results
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          View your published continuous assessments and exam scores.
-        </p>
-      </motion.div>
+    <div className="max-w-6xl mx-auto space-y-6 pb-12 px-4 sm:px-0">
+      {/* Header & Dynamic Print Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Award className="text-blue-600" /> Academic Results
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            View your published continuous assessments and exam scores.
+          </p>
+        </motion.div>
+
+        {/* Print Button Appears Here if Results Exist */}
+        <AnimatePresence>
+          {hasChecked && results.length > 0 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              onClick={() =>
+                router.push(
+                  `/student/result-printout?session=${session}&semester=${semester}`,
+                )
+              }
+              className="w-full sm:w-auto flex justify-center items-center gap-2 bg-blue-900 text-white px-6 py-3 rounded-xl font-black text-xs hover:bg-blue-800 transition-all shadow-lg uppercase tracking-widest">
+              <Printer size={16} /> Print Statement
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-card p-6 rounded-2xl border border-border shadow-sm">
+        className="bg-card p-6 rounded-3xl border border-border shadow-sm">
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <select
             value={session}
             onChange={(e) => setSession(e.target.value)}
-            className="w-full md:flex-1 bg-background border border-input text-foreground font-bold px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-900 transition-all">
+            className="w-full md:flex-1 bg-background border border-input text-foreground font-bold px-4 py-3.5 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-900 transition-all">
             <option>2025/2026</option>
             <option>2024/2025</option>
           </select>
           <select
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
-            className="w-full md:flex-1 bg-background border border-input text-foreground font-bold px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-900 transition-all">
+            className="w-full md:flex-1 bg-background border border-input text-foreground font-bold px-4 py-3.5 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-900 transition-all">
             <option>1st Semester</option>
             <option>2nd Semester</option>
           </select>
           <button
             onClick={handleCheckResults}
             disabled={isChecking}
-            className="w-full md:w-auto bg-blue-900 text-white px-10 py-3 rounded-xl font-bold hover:bg-blue-800 disabled:opacity-50 transition-all shadow-md flex justify-center items-center gap-2 uppercase tracking-widest text-xs">
+            className="w-full md:w-auto bg-blue-900 text-white px-10 py-3.5 rounded-2xl font-black hover:bg-blue-800 disabled:opacity-50 transition-all shadow-md flex justify-center items-center gap-2 uppercase tracking-widest text-xs">
             {isChecking ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" /> Checking
@@ -149,7 +184,7 @@ export default function ResultPage() {
             key="results"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
+            className="bg-card border border-border rounded-[2rem] overflow-hidden shadow-sm">
             <div className="p-6 bg-muted/20 border-b border-border flex justify-between items-center">
               <h3 className="font-bold text-foreground flex items-center gap-2">
                 <BookOpen size={18} className="text-blue-600" /> Result
@@ -161,12 +196,12 @@ export default function ResultPage() {
               <table className="w-full text-sm text-left">
                 <thead className="bg-muted/50 text-muted-foreground uppercase text-[10px] tracking-widest font-black">
                   <tr>
-                    <th className="px-6 py-4">Course Info</th>
-                    <th className="px-6 py-4 text-center">Units</th>
-                    <th className="px-6 py-4 text-center">CA</th>
-                    <th className="px-6 py-4 text-center">Exam</th>
-                    <th className="px-6 py-4 text-center">Total</th>
-                    <th className="px-6 py-4 text-center">Grade</th>
+                    <th className="px-6 py-5">Course Info</th>
+                    <th className="px-6 py-5 text-center">Units</th>
+                    <th className="px-6 py-5 text-center">CA</th>
+                    <th className="px-6 py-5 text-center">Exam</th>
+                    <th className="px-6 py-5 text-center">Total</th>
+                    <th className="px-6 py-5 text-center">Grade</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
