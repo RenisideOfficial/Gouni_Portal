@@ -31,7 +31,7 @@ const Login = () => {
       label: "Log In",
       title: "Welcome Back",
       idPlaceholder: "Matric Number or Email",
-      image: "/images/student_studying.jpg",
+      image: "/images/chinweike.jpg",
     },
     staff: {
       label: "Staff Portal",

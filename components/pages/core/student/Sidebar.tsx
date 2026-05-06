@@ -100,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <Link href="/dashboard/student/profile" onClick={onClose}>
             <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 overflow-hidden mb-3 hover:opacity-80 transition-opacity cursor-pointer">
               <img
-                src={studentUser?.avatar || "/images/student_studying.jpg"}
+                src={studentUser?.avatar || "/images/chinweike.jpg"}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />

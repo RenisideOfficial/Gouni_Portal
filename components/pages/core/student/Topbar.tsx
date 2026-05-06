@@ -53,7 +53,7 @@ const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
           href="/dashboard/student/profile"
           className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden">
           <img
-            src={studentUser?.avatar || "/images/student_studying.jpg"}
+            src={studentUser?.avatar || "/images/chinweike.jpg"}
             alt="Profile"
             className="w-full h-full object-cover"
           />

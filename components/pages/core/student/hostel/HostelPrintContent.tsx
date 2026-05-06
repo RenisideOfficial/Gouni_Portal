@@ -70,7 +70,7 @@ export default function HostelPrintContent() {
           {/* PROFILE PICTURE */}
           <div className="w-28 h-32 border-4 border-slate-100 rounded-xl overflow-hidden shadow-sm">
             <img
-              src="/images/student_studying.jpg"
+              src="/images/chinweike.jpg"
               alt="Student Profile"
               className="w-full h-full object-cover"
             />
