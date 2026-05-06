@@ -30,7 +30,7 @@ const Hero = () => {
           {/* Subheading */}
           <motion.div
             variants={itemVariants}
-            className="flex md:flex md:flex-row flex-col gap-2 items-center space-x-2 mb-6">
+            className="flex md:flex-row flex-col gap-2 items-center space-x-2 mb-6">
             <span className="text-blue-900 dark:text-blue-400">
               <AiFillStar />
             </span>
@@ -74,23 +74,23 @@ const Hero = () => {
             — all in one secure platform.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - Responsive */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href="/login" passHref>
+            className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+            <Link href="/login" passHref className="w-full sm:w-auto">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-10 py-4 bg-blue-900 dark:bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition-colors shadow-lg cursor-pointer">
+                className="w-full sm:w-auto px-10 py-4 bg-blue-900 dark:bg-blue-700 text-white font-semibold rounded-full hover:bg-blue-800 transition-colors shadow-lg cursor-pointer text-center">
                 Login
               </motion.div>
             </Link>
-            <Link href="/register" passHref>
+            <Link href="/register" passHref className="w-full sm:w-auto">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto px-10 py-4 border-2 border-blue-900 dark:border-blue-500 text-blue-900 dark:text-blue-400 font-semibold rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors cursor-pointer">
+                className="w-full sm:w-auto px-10 py-4 border-2 border-blue-900 dark:border-blue-500 text-blue-900 dark:text-blue-400 font-semibold rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors cursor-pointer text-center">
                 Register As Student
               </motion.div>
             </Link>
