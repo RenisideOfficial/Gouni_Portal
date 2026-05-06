@@ -1,7 +1,8 @@
 // src/components/pages/auth/Register.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
 const slideVariants: Variants = {
@@ -11,11 +12,92 @@ const slideVariants: Variants = {
 };
 
 const Register = () => {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const totalSteps = 4;
 
+  // Centralized State: Ensures data persists when navigating Back and Next
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    regNumber: "",
+    phone: "",
+    address: "",
+    examType: "WAEC",
+    examYear: "",
+    examNumber: "",
+    guardianName: "",
+    guardianPhone: "",
+    relationship: "Father",
+  });
+
+  // Check if the user just came from the Activation Modal
+  // Fixed: Wrapped in a setTimeout to prevent synchronous cascading renders
+  // and satisfy strict ESLint rules for Next.js
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const activationData = localStorage.getItem("gouni_activation_temp");
+      if (activationData) {
+        try {
+          const parsedData = JSON.parse(activationData);
+          setFormData((prev) => ({
+            ...prev,
+            regNumber: parsedData.regNumber, // Pre-fill the reg number
+          }));
+          // Clean up temp data so it doesn't leak
+          localStorage.removeItem("gouni_activation_temp");
+        } catch (error) {
+          console.error("Error parsing activation data", error);
+        }
+      }
+    }, 0);
+
+    return () => clearTimeout(timer); // Cleanup timer on unmount
+  }, []);
+
+  // Universal input handler
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
+
+  // Local Storage Sync: Saves user to "Database" and logs them in
+  const handleFinalSubmit = () => {
+    // Fetch existing users or initialize empty array
+    const existingUsers = JSON.parse(
+      localStorage.getItem("gouni_users") || "[]",
+    );
+
+    // Create new user profile
+    const newUser = {
+      ...formData,
+      role: "student", // Default role for registration
+      id: `GOU/STUDENT/${Date.now()}`,
+      name: `${formData.firstName} ${formData.lastName}`,
+      status: "Active",
+    };
+
+    // Save to simulated database
+    localStorage.setItem(
+      "gouni_users",
+      JSON.stringify([...existingUsers, newUser]),
+    );
+
+    // Set current active session
+    localStorage.setItem("gouni_current_user", JSON.stringify(newUser));
+
+    // Redirect to Student Dashboard
+    router.push("/dashboard/student");
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-8 transition-colors duration-300">
@@ -50,13 +132,14 @@ const Register = () => {
           </div>
           <div className="text-center mb-8">
             <span className="text-blue-700 dark:text-blue-400 font-bold text-xs tracking-widest uppercase">
-              Sign Up
+              Step {step} of {totalSteps}
             </span>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mt-2">
               Set Up your account
             </h1>
           </div>
 
+          {/* Progress Bar */}
           <div className="flex items-center justify-between gap-2 mb-8">
             {[1, 2, 3, 4].map((i) => (
               <div
@@ -75,6 +158,7 @@ const Register = () => {
 
         <div className="p-8 pt-0 relative min-h-[350px]">
           <AnimatePresence mode="wait">
+            {/* STEP 1: Basic Info */}
             {step === 1 && (
               <motion.div
                 key="step1"
@@ -90,6 +174,9 @@ const Register = () => {
                     </label>
                     <input
                       type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
                       placeholder="E.g Samuel"
                       className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                     />
@@ -100,6 +187,9 @@ const Register = () => {
                     </label>
                     <input
                       type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
                       placeholder="E.g Nnana"
                       className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                     />
@@ -111,6 +201,9 @@ const Register = () => {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     placeholder="yourexample4@gmail.com"
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                   />
@@ -121,8 +214,11 @@ const Register = () => {
                   </label>
                   <input
                     type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground tracking-widest"
                   />
                   <p className="text-xs text-blue-700 dark:text-blue-400 mt-2 font-medium">
                     Must be at least 8 characters
@@ -131,6 +227,7 @@ const Register = () => {
               </motion.div>
             )}
 
+            {/* STEP 2: Personal Details */}
             {step === 2 && (
               <motion.div
                 key="step2"
@@ -148,8 +245,11 @@ const Register = () => {
                   </label>
                   <input
                     type="text"
+                    name="regNumber"
+                    value={formData.regNumber}
+                    onChange={handleInputChange}
                     placeholder="Enter Registration Number"
-                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground uppercase"
                   />
                 </div>
                 <div>
@@ -158,6 +258,9 @@ const Register = () => {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
                     placeholder="+234 XXX XXXX"
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                   />
@@ -167,13 +270,18 @@ const Register = () => {
                     Residential Address
                   </label>
                   <textarea
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
                     rows={2}
                     placeholder="Your full address..."
-                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none resize-none placeholder:text-muted-foreground"></textarea>
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none resize-none placeholder:text-muted-foreground"
+                  />
                 </div>
               </motion.div>
             )}
 
+            {/* STEP 3: Academic Info */}
             {step === 3 && (
               <motion.div
                 key="step3"
@@ -190,7 +298,11 @@ const Register = () => {
                     <label className="block text-sm font-medium text-foreground mb-1.5">
                       Exam Type
                     </label>
-                    <select className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none">
+                    <select
+                      name="examType"
+                      value={formData.examType}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none">
                       <option>WAEC</option>
                       <option>NECO</option>
                       <option>NABTEB</option>
@@ -202,6 +314,9 @@ const Register = () => {
                     </label>
                     <input
                       type="number"
+                      name="examYear"
+                      value={formData.examYear}
+                      onChange={handleInputChange}
                       placeholder="2024"
                       className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                     />
@@ -213,6 +328,9 @@ const Register = () => {
                   </label>
                   <input
                     type="text"
+                    name="examNumber"
+                    value={formData.examNumber}
+                    onChange={handleInputChange}
                     placeholder="Enter Exam Number"
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                   />
@@ -229,6 +347,7 @@ const Register = () => {
               </motion.div>
             )}
 
+            {/* STEP 4: Guardian Info */}
             {step === 4 && (
               <motion.div
                 key="step4"
@@ -246,6 +365,9 @@ const Register = () => {
                   </label>
                   <input
                     type="text"
+                    name="guardianName"
+                    value={formData.guardianName}
+                    onChange={handleInputChange}
                     placeholder="Mr./Mrs. Guardian Name"
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                   />
@@ -256,6 +378,9 @@ const Register = () => {
                   </label>
                   <input
                     type="tel"
+                    name="guardianPhone"
+                    value={formData.guardianPhone}
+                    onChange={handleInputChange}
                     placeholder="+234 XXX XXXX"
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none placeholder:text-muted-foreground"
                   />
@@ -264,7 +389,11 @@ const Register = () => {
                   <label className="block text-sm font-medium text-foreground mb-1.5">
                     Relationship to Student
                   </label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none">
+                  <select
+                    name="relationship"
+                    value={formData.relationship}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none">
                     <option>Father</option>
                     <option>Mother</option>
                     <option>Sibling</option>
@@ -275,6 +404,7 @@ const Register = () => {
             )}
           </AnimatePresence>
 
+          {/* Form Navigation Actions */}
           <div className="flex items-center gap-4 mt-8 pt-6 border-t border-border">
             {step > 1 && (
               <button
@@ -286,7 +416,7 @@ const Register = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={step === totalSteps ? undefined : nextStep}
+              onClick={step === totalSteps ? handleFinalSubmit : nextStep}
               className="flex-1 py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors">
               {step === totalSteps ? "Complete Setup" : "Next Step"}
             </motion.button>

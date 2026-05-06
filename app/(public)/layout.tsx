@@ -9,7 +9,6 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    // REMOVED bg-white. ADDED bg-background text-foreground
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       <Navbar />
       <main className="flex-grow">{children}</main>

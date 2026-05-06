@@ -2,6 +2,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import ActivationModal from "./ActivationModal";
 
@@ -13,9 +14,15 @@ const fadeUpVariants: Variants = {
 };
 
 const Login = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isActivationModalOpen, setActivationModalOpen] = useState(false);
+
+  // Local State for Authentication
   const [activeRole, setActiveRole] = useState<Role>("student");
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   // Dynamic configuration based on SRS User Classes
   const roleConfig = {
@@ -39,11 +46,68 @@ const Login = () => {
     },
   };
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Fetch users from our simulated LocalStorage Database
+    const users = JSON.parse(localStorage.getItem("gouni_users") || "[]");
+
+    // Find a user that matches the identifier, password, and active role tab
+    let user = users.find(
+      (u: any) =>
+        (u.email === identifier ||
+          u.regNumber === identifier ||
+          u.staffId === identifier ||
+          u.adminId === identifier) &&
+        u.password === password &&
+        u.role === activeRole,
+    );
+
+    if (!user) {
+      if (
+        activeRole === "admin" &&
+        identifier.toLowerCase() === "admin" &&
+        password === "admin"
+      ) {
+        user = { role: "admin", name: "System Admin", id: "GOU/ADMIN/001" };
+      } else if (
+        activeRole === "staff" &&
+        identifier.toLowerCase() === "staff" &&
+        password === "staff"
+      ) {
+        user = { role: "staff", name: "Dr. Emeka", id: "GOU/STAFF/045" };
+      } else if (
+        activeRole === "student" &&
+        identifier.toLowerCase() === "student" &&
+        password === "student"
+      ) {
+        user = {
+          role: "student",
+          name: "Demo Student",
+          regNumber: "GOU/U24/DEMO",
+        };
+      }
+    }
+
+    if (user) {
+      // Create session and redirect
+      localStorage.setItem("gouni_current_user", JSON.stringify(user));
+      router.push(`/dashboard/${activeRole}`);
+    } else {
+      // Show error
+      setError(
+        "Invalid credentials. For the demo, you can use 'student', 'staff', or 'admin' as both ID and Password.",
+      );
+      setTimeout(() => setError(""), 6000);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen w-full flex bg-background transition-colors duration-300 overflow-hidden">
         {/* Left Form Side */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 lg:px-32 relative">
+          {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -95,7 +159,11 @@ const Login = () => {
               {(["student", "staff", "admin"] as Role[]).map((role) => (
                 <button
                   key={role}
-                  onClick={() => setActiveRole(role)}
+                  type="button"
+                  onClick={() => {
+                    setActiveRole(role);
+                    setError(""); // Clear errors when switching tabs
+                  }}
                   className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider relative z-10 transition-colors ${
                     activeRole === role ? "text-white" : "text-muted-foreground"
                   }`}>
@@ -126,7 +194,7 @@ const Login = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ duration: 0.3 }}
-                className="mb-8 text-center lg:text-left">
+                className="mb-6 text-center lg:text-left">
                 <span className="text-blue-700 dark:text-blue-400 font-bold text-xs tracking-widest uppercase">
                   {roleConfig[activeRole].label}
                 </span>
@@ -136,16 +204,33 @@ const Login = () => {
               </motion.div>
             </AnimatePresence>
 
+            {/* Form */}
             <motion.form
               variants={fadeUpVariants}
               className="space-y-5"
-              onSubmit={(e) => e.preventDefault()}>
+              onSubmit={handleLogin}>
+              {/* Error Message Display */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm text-center border border-red-100 dark:border-red-900/30">
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
                   Identification
                 </label>
                 <input
                   type="text"
+                  required
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   placeholder={roleConfig[activeRole].idPlaceholder}
                   className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all placeholder:text-muted-foreground"
                 />
@@ -158,6 +243,9 @@ const Login = () => {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all tracking-widest placeholder:tracking-normal placeholder:text-muted-foreground"
                   />
@@ -207,6 +295,7 @@ const Login = () => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                type="submit"
                 className="w-full py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors mt-4">
                 Sign In to Portal
               </motion.button>
@@ -232,7 +321,7 @@ const Login = () => {
           </motion.div>
         </div>
 
-        {/* Right Image Side - Now Dynamic */}
+        {/* Right Image Side - Dynamic Crossfade */}
         <div className="hidden lg:block lg:w-1/2 relative bg-muted overflow-hidden p-4">
           <motion.div
             initial={{ opacity: 0, scale: 1.05 }}

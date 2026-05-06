@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GO University Student & Staff Portal 🎓
 
-## Getting Started
+A high-fidelity, full-stack academic management prototype built with **Next.js 14**, **Tailwind CSS**, and **Framer Motion** — developed as a core **Human-Computer Interaction (HCI)** study to observe and improve user workflows in existing university systems.
 
-First, run the development server:
+---
+
+## 🌟 HCI & UX Philosophy
+
+Unlike traditional administrative software, this portal is built in strict adherence to HCI principles to reduce cognitive load and improve **Visibility of System Status**.
+
+| Principle                         | Implementation                                                                                                                                                                     |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Zero-Latency Feedback**         | Client-side persistence via `localStorage` provides instantaneous state updates (e.g., student approval, result publishing), meeting the HCI requirement for fluid system response |
+| **Aesthetic & Minimalist Design** | Card-based UI prevents information overload — students and staff only see context-relevant data                                                                                    |
+| **Consistency & Standards**       | A unified design language across three distinct user roles (Student, Staff, Admin), keeping the user's mental model stable throughout the platform                                 |
+| **Accessibility — Dark Mode**     | Fully integrated CSS variables for dark mode support, catering to low-light usage common in student environments                                                                   |
+| **Error Prevention & Recovery**   | Multi-step registration forms use persistent state objects to ensure no data is lost during navigation                                                                             |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer          | Technology                                         |
+| -------------- | -------------------------------------------------- |
+| **Framework**  | Next.js 14 (App Router)                            |
+| **Styling**    | Tailwind CSS                                       |
+| **Animations** | Framer Motion                                      |
+| **Icons**      | Lucide React                                       |
+| **Storage**    | Browser LocalStorage (Synchronised Client-Side DB) |
+| **Deployment** | Vercel                                             |
+
+---
+
+## 🚀 Key Modules
+
+### 1. Administrative Module
+
+- **Admission Control** — Approve applicants and simulate the generation and emailing of matriculation numbers and activation tokens
+- **Staff CRUD** — Manage staff profiles, set salary details, and assign courses to lecturers
+- **Financial Reporting** — Set school fee structures and view high-level revenue reports
+- **Student Management** — Activate/suspend student accounts and edit registration details
+
+### 2. Staff Module
+
+- **Result Entry** — Manual and CSV-based result uploads for assigned courses
+- **Student Tracking** — View and export lists of students registered for specific courses
+- **Welfare** — View payment history and download payslips
+
+### 3. Student Module
+
+- **Registration** — Multi-step onboarding process with full input persistence
+- **Academic Hub** — Course registration, result viewing (GPA/CGPA tracking), and clearance tracking
+- **Accommodation** — Real-time hostel viewing and booking simulation
+
+---
+
+## 💾 LocalStorage "Database" Logic
+
+To ensure this project remains a robust, zero-downtime presentation tool, all data is synchronised through the browser's `localStorage`.
+
+- **Simulated Auth** — The login component verifies credentials against a `gouni_users` array stored locally
+- **Global Sync** — Changes made in the Admin dashboard (e.g., approving a student) are reflected immediately in that student's active session
+- **Persistence Fix** — Multi-step forms use a `useEffect` hydration strategy to prevent Next.js hydration mismatches while keeping form data intact across page refreshes
+
+---
+
+## 🏁 Getting Started
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/yourusername/gouni-portal.git
+```
+
+**2. Install dependencies**
+
+```bash
+npm install
+```
+
+**3. Run the development server**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**4. Open in browser**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔐 Demo Credentials
 
-To learn more about Next.js, take a look at the following resources:
+For the live presentation, the login system includes a fallback with the following pre-seeded credentials:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Role    | ID        | Password  |
+| ------- | --------- | --------- |
+| Admin   | `admin`   | `admin`   |
+| Staff   | `staff`   | `staff`   |
+| Student | `student` | `student` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📄 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is for **academic purposes only**, developed as part of an HCI study at Godfrey Okoye University.
