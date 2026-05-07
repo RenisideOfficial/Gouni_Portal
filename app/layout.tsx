@@ -2,12 +2,12 @@
 import type { Metadata } from "next";
 import { Inter, Geist } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 import DatabaseSeeder from "@/components/pages/core/DatabaseSeeder";
 import CourseSeeder from "@/components/pages/core/CourseSeeder";
+import FeeSeeder from "@/components/pages/core/FeeSeeder";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -59,12 +59,11 @@ export default function RootLayout({
         className={`${inter.className} min-h-screen bg-background text-foreground`}
         suppressHydrationWarning>
         <ThemeProvider defaultTheme="system" storageKey="gouni_portal_theme">
-          <AuthProvider>
-            <DatabaseSeeder />
-            <CourseSeeder />
-            {children}
-            <Toaster position="top-right" richColors closeButton />
-          </AuthProvider>
+          <DatabaseSeeder />
+          <CourseSeeder />
+          <FeeSeeder />
+          {children}
+          <Toaster position="top-right" richColors closeButton />
         </ThemeProvider>
       </body>
     </html>

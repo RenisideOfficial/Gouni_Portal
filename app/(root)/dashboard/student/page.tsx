@@ -246,7 +246,7 @@ export default function StudentDashboardHome() {
           <Link
             href="/dashboard/student/payments"
             className="text-xs bg-blue-900 dark:bg-blue-700 text-white px-5 py-2 rounded-xl font-bold hover:bg-blue-800 transition-all shadow-sm">
-            Generate Invoice
+            Make Payment
           </Link>
         </div>
         <div className="overflow-x-auto">

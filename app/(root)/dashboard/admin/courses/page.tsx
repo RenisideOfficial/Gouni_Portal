@@ -14,8 +14,8 @@ import {
   LayoutGrid,
   AlertTriangle,
 } from "lucide-react";
-import { feeStructure } from "@/lib/constants/finance_data";
 import { facultyData } from "@/lib/constants/faculty_mapping";
+import { feeStructure as defaultFeeStructure } from "@/lib/constants/finance_data";
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<any[]>([]);
@@ -24,6 +24,7 @@ export default function AdminCoursesPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [requiredFees, setRequiredFees] = useState<string[]>([]);
+  const [availableFeeNames, setAvailableFeeNames] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const [filters, setFilters] = useState({
@@ -31,7 +32,6 @@ export default function AdminCoursesPage() {
     level: "100L",
     sem: "1st Semester",
   });
-
   const [formData, setFormData] = useState({ code: "", title: "", units: 3 });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -41,11 +41,26 @@ export default function AdminCoursesPage() {
       localStorage.getItem("gouni_master_courses") || "[]",
     );
     setCourses(stored);
+
+    // Dynamic Fees Load
+    let storedFees = JSON.parse(localStorage.getItem("gouni_fees") || "null");
+    if (!storedFees) {
+      storedFees = defaultFeeStructure;
+      localStorage.setItem("gouni_fees", JSON.stringify(storedFees));
+    }
+    const feeNames = [
+      "Tuition Fee",
+      ...storedFees.otherFees.map((f: any) => f.name),
+    ];
+    setAvailableFeeNames(feeNames);
+
     const reqs = JSON.parse(
       localStorage.getItem("gouni_registration_requirements") ||
         '["Tuition Fee"]',
     );
-    setRequiredFees(reqs);
+    // Clean up reqs in case a fee was deleted by admin
+    const validReqs = reqs.filter((r: string) => feeNames.includes(r));
+    setRequiredFees(validReqs);
   };
 
   useEffect(() => {
@@ -400,10 +415,7 @@ export default function AdminCoursesPage() {
               </div>
               <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
                 <div className="space-y-2">
-                  {[
-                    "Tuition Fee",
-                    ...feeStructure.otherFees.map((f) => f.name),
-                  ].map((fee) => (
+                  {availableFeeNames.map((fee) => (
                     <div
                       key={fee}
                       onClick={() =>
