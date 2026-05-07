@@ -1,4 +1,3 @@
-// src/components/pages/core/staff/Sidebar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -31,18 +30,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
   const [staffUser, setStaffUser] = useState<any>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const storedUser = localStorage.getItem("gouni_current_user");
-      if (storedUser) {
-        try {
-          setStaffUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Failed to parse current user data", error);
-        }
+  // Define logic to load user data
+  const loadUser = () => {
+    const storedUser = localStorage.getItem("gouni_current_user");
+    if (storedUser) {
+      try {
+        setStaffUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Failed to parse current user data", error);
       }
+    }
+  };
+
+  useEffect(() => {
+    // Defer the initial load to prevent synchronous setState cascading render warning
+    const timer = setTimeout(() => {
+      loadUser();
     }, 0);
-    return () => clearTimeout(timer);
+
+    // Listen for storage changes to update avatar instantly
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("storage", loadUser);
+    };
   }, []);
 
   return (
@@ -74,9 +86,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </span>
         </div>
 
+        {/* Profile Summary - Dynamic Avatar */}
         <div className="p-6 flex flex-col items-center border-b border-border/50 flex-shrink-0">
           <Link href="/dashboard/staff/profile" onClick={onClose}>
-            <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 overflow-hidden mb-3 hover:opacity-80 transition-opacity cursor-pointer">
+            <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 overflow-hidden mb-3 hover:opacity-80 transition-opacity cursor-pointer bg-muted flex items-center justify-center">
               <img
                 src={staffUser?.avatar || "/images/staff_login_bg.jpg"}
                 alt="Profile"
@@ -84,10 +97,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               />
             </div>
           </Link>
-          <h3 className="font-bold text-foreground text-center">
+          <h3 className="font-bold text-foreground text-center line-clamp-1">
             {staffUser ? staffUser.name : "Loading..."}
           </h3>
-          <span className="text-xs text-muted-foreground mt-1">
+          <span className="text-xs text-muted-foreground mt-1 line-clamp-1">
             {staffUser ? staffUser.dept || "Faculty" : "..."}
           </span>
         </div>

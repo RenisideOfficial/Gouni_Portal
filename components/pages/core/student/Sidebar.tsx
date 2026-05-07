@@ -1,4 +1,3 @@
-// src/components/pages/core/student/Sidebar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -41,27 +40,32 @@ const navLinks = [
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
-
-  // State to hold dynamically fetched student data
   const [studentUser, setStudentUser] = useState<any>(null);
 
+  // Added Storage Event Listener to instantly update avatar
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const loadUser = () => {
       const storedUser = localStorage.getItem("gouni_current_user");
       if (storedUser) {
         try {
           setStudentUser(JSON.parse(storedUser));
         } catch (error) {
-          console.error("Failed to parse current user data", error);
+          console.error("Failed to parse", error);
         }
       }
-    }, 0);
-    return () => clearTimeout(timer);
+    };
+
+    const timer = setTimeout(loadUser, 0);
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("storage", loadUser);
+    };
   }, []);
 
   return (
     <>
-      {/* Mobile Backdrop */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -74,20 +78,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar Container */}
       <aside
-        className={`
-        fixed md:static inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 ease-in-out
-        ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-      `}>
-        {/* Mobile Close Button */}
+        className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
         <button
           onClick={onClose}
           className="md:hidden absolute top-6 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors">
           <X className="w-5 h-5" />
         </button>
 
-        {/* Logo Area */}
         <div className="p-6 flex items-center gap-3 border-b border-border/50 flex-shrink-0">
           <img src="/images/gouni_logo.svg" alt="GOUNI" className="w-8 h-8" />
           <span className="font-bold text-sm text-foreground tracking-wider uppercase">
@@ -95,12 +93,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </span>
         </div>
 
-        {/* Profile Summary - Now Dynamic */}
         <div className="p-6 flex flex-col items-center border-b border-border/50 flex-shrink-0">
           <Link href="/dashboard/student/profile" onClick={onClose}>
-            <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 overflow-hidden mb-3 hover:opacity-80 transition-opacity cursor-pointer">
+            <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 bg-muted overflow-hidden mb-3 hover:opacity-80 transition-opacity cursor-pointer">
               <img
-                src={studentUser?.avatar || "/images/chinweike.jpg"}
+                src={studentUser?.avatar || "/images/user_image.jpg"}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -114,22 +111,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </span>
         </div>
 
-        {/* Navigation Links */}
         <div className="flex-1 py-6 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             const Icon = link.icon;
-
             return (
               <Link key={link.name} href={link.href} onClick={onClose}>
                 <motion.div
                   whileHover={{ x: 4 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                    isActive
-                      ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}>
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
                   <Icon className="w-5 h-5" />
                   <span className="text-sm">{link.name}</span>
                 </motion.div>
@@ -138,7 +129,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           })}
         </div>
 
-        {/* Bottom Links */}
         <div className="p-4 border-t border-border/50 space-y-1.5 flex-shrink-0">
           <Link href="/dashboard/student/profile" onClick={onClose}>
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer">

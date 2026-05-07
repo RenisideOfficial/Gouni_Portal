@@ -33,14 +33,20 @@ export default function ResultPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Updated to include points for GPA calculation
   const calculateGrade = (ca: number, exam: number) => {
     const total = ca + exam;
-    if (total >= 70) return { total, grade: "A", color: "text-green-600" };
-    if (total >= 60) return { total, grade: "B", color: "text-green-600" };
-    if (total >= 50) return { total, grade: "C", color: "text-amber-600" };
-    if (total >= 45) return { total, grade: "D", color: "text-amber-600" };
-    if (total >= 40) return { total, grade: "E", color: "text-orange-500" };
-    return { total, grade: "F", color: "text-red-600" };
+    if (total >= 70)
+      return { total, grade: "A", color: "text-green-600", points: 5 };
+    if (total >= 60)
+      return { total, grade: "B", color: "text-green-600", points: 4 };
+    if (total >= 50)
+      return { total, grade: "C", color: "text-amber-600", points: 3 };
+    if (total >= 45)
+      return { total, grade: "D", color: "text-amber-600", points: 2 };
+    if (total >= 40)
+      return { total, grade: "E", color: "text-orange-500", points: 1 };
+    return { total, grade: "F", color: "text-red-600", points: 0 };
   };
 
   const handleCheckResults = () => {
@@ -77,7 +83,7 @@ export default function ResultPage() {
           if (myScore) {
             const ca = Number(myScore.ca) || 0;
             const exam = Number(myScore.exam) || 0;
-            const { total, grade, color } = calculateGrade(ca, exam);
+            const { total, grade, color, points } = calculateGrade(ca, exam);
             return {
               ...course,
               ca,
@@ -85,6 +91,7 @@ export default function ResultPage() {
               total,
               grade,
               color,
+              points, // Save points for GPA
               status: "Published",
             };
           } else {
@@ -95,6 +102,7 @@ export default function ResultPage() {
               total: "-",
               grade: "-",
               color: "text-muted-foreground",
+              points: 0, // No points for pending
               status: "Pending",
             };
           }
@@ -106,6 +114,16 @@ export default function ResultPage() {
       setHasChecked(true);
     }, 1200);
   };
+
+  // Calculate Semester GPA
+  const validResults = results.filter((r) => r.status === "Published");
+  const totalUnits = validResults.reduce((acc, curr) => acc + curr.units, 0);
+  const totalQualityPoints = validResults.reduce(
+    (acc, curr) => acc + curr.units * curr.points,
+    0,
+  );
+  const gpa =
+    totalUnits > 0 ? (totalQualityPoints / totalUnits).toFixed(2) : "0.00";
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12 px-4 sm:px-0">
@@ -261,6 +279,26 @@ export default function ResultPage() {
                   )}
                 </tbody>
               </table>
+
+              {/* GPA Footer matching the printout */}
+              {results.length > 0 && (
+                <div className="bg-muted/10 p-6 border-t border-border flex justify-end gap-12">
+                  <div className="text-right">
+                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">
+                      Total Units
+                    </p>
+                    <p className="text-2xl font-black text-foreground">
+                      {totalUnits}
+                    </p>
+                  </div>
+                  <div className="text-right border-l border-border pl-12">
+                    <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">
+                      Semester GPA
+                    </p>
+                    <p className="text-2xl font-black text-foreground">{gpa}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

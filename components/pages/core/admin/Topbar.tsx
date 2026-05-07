@@ -1,31 +1,46 @@
-// src/components/pages/core/admin/Topbar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { Search, Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
+// Reuse type definition if it were moved to a common area, or redefine locally
+// Here we redefine locales for strict inline typing
+interface AdminUserTopbarType {
+  avatar?: string;
+}
 
 interface TopbarProps {
   onOpenSidebar: () => void;
 }
 
 const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
-  const [adminUser, setAdminUser] = useState<{ avatar?: string } | null>(null);
+  const [adminUser, setAdminUser] = useState<AdminUserTopbarType | null>(null);
 
-  // Fixed: Wrapped in setTimeout to prevent synchronous cascading renders
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const storedUser = localStorage.getItem("gouni_current_user");
-      if (storedUser) {
-        try {
-          setAdminUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Failed to parse current user", error);
-        }
+  // Define logic to load user data from storage
+  const loadUser = () => {
+    const storedUser = localStorage.getItem("gouni_current_user");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser) as AdminUserTopbarType;
+        setAdminUser(parsed);
+      } catch (error) {
+        console.error("Failed to parse current user", error);
       }
-    }, 0);
+    }
+  };
 
-    return () => clearTimeout(timer); // Cleanup
+  useEffect(() => {
+    // 1. Initial Load (deferred briefly)
+    const timer = setTimeout(loadUser, 100);
+
+    // 2. Event Listener for Storage Changes (Profile update)
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      // Cleanup
+      clearTimeout(timer);
+      window.removeEventListener("storage", loadUser);
+    };
   }, []);
 
   return (
@@ -48,10 +63,10 @@ const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
       <div className="flex items-center gap-4 ml-auto">
         <ThemeToggle />
 
-        {/* Mobile Profile Display */}
+        {/* Mobile Profile Display - Dynamic Avatar */}
         <Link
           href="/dashboard/admin/profile"
-          className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden block">
+          className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted flex items-center justify-center">
           <img
             src={adminUser?.avatar || "/images/admin_login_bg.jpg"}
             alt="Profile"

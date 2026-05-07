@@ -1,4 +1,3 @@
-// src/components/pages/core/staff/Topbar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import { Search, Menu } from "lucide-react";
@@ -12,25 +11,38 @@ interface TopbarProps {
 const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
   const [staffUser, setStaffUser] = useState<any>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const storedUser = localStorage.getItem("gouni_current_user");
-      if (storedUser) {
-        try {
-          setStaffUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Failed to parse current user", error);
-        }
+  // Define logic to load user data
+  const loadUser = () => {
+    const storedUser = localStorage.getItem("gouni_current_user");
+    if (storedUser) {
+      try {
+        setStaffUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Failed to parse current user", error);
       }
+    }
+  };
+
+  useEffect(() => {
+    // Defer the initial load to prevent synchronous setState cascading render warning
+    const timer = setTimeout(() => {
+      loadUser();
     }, 0);
-    return () => clearTimeout(timer);
+
+    // Listen for storage changes from other components
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("storage", loadUser);
+    };
   }, []);
 
   return (
     <header className="h-20 flex-shrink-0 bg-background border-b border-border flex items-center justify-between px-4 sm:px-8 z-30 transition-colors duration-300">
       <button
         onClick={onOpenSidebar}
-        className="md:hidden p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors">
+        className="md:hidden p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors overflow-hidden">
         <Menu className="w-6 h-6" />
       </button>
 
@@ -45,9 +57,10 @@ const Topbar: React.FC<TopbarProps> = ({ onOpenSidebar }) => {
 
       <div className="flex items-center gap-4 ml-auto">
         <ThemeToggle />
+        {/* Mobile Profile Avatar - Dynamic */}
         <Link
           href="/dashboard/staff/profile"
-          className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden">
+          className="md:hidden w-10 h-10 rounded-full border-2 border-border overflow-hidden bg-muted flex items-center justify-center">
           <img
             src={staffUser?.avatar || "/images/staff_login_bg.jpg"}
             alt="Profile"

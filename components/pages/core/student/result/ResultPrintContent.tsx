@@ -86,7 +86,6 @@ export default function ResultPrintContent() {
       </div>
     );
 
-  // Calculate Semester GPA
   const validResults = results.filter((r) => r.published);
   const totalUnits = validResults.reduce((acc, curr) => acc + curr.units, 0);
   const totalQualityPoints = validResults.reduce(
@@ -97,97 +96,97 @@ export default function ResultPrintContent() {
     totalUnits > 0 ? (totalQualityPoints / totalUnits).toFixed(2) : "0.00";
 
   return (
-    <div className="min-h-screen bg-slate-50 print:bg-white pb-20 font-sans">
-      <div className="max-w-4xl mx-auto pt-8 px-4 print:hidden flex justify-between items-center mb-6">
+    <div className="min-h-screen bg-slate-50 print:bg-white pb-10 font-sans">
+      <div className="max-w-4xl mx-auto pt-6 px-4 print:hidden flex justify-between items-center mb-4">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-slate-600 font-bold hover:text-blue-900 transition-colors">
-          <ArrowLeft size={18} /> Back
+          <ArrowLeft size={16} /> Back
         </button>
         <button
           onClick={() => window.print()}
-          className="bg-blue-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 shadow-xl hover:bg-blue-800 transition-all">
-          <Printer size={18} /> Print Statement
+          className="bg-blue-900 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2 shadow-xl hover:bg-blue-800 transition-all">
+          <Printer size={16} /> Print Statement
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto bg-white shadow-2xl print:shadow-none border border-slate-200 p-8 sm:p-16 rounded-[2.5rem] print:rounded-none">
-        {/* Formal Header Without Profile Picture */}
-        <div className="flex flex-col items-center text-center border-b-4 border-slate-900 pb-8 mb-10">
+      <div className="max-w-4xl mx-auto bg-white shadow-2xl print:shadow-none border border-slate-200 p-6 sm:p-10 rounded-3xl print:rounded-none">
+        {/* Formal Header */}
+        <div className="flex flex-col items-center text-center border-b-2 border-slate-900 pb-6 mb-6">
           <img
             src="/images/gouni_logo.svg"
             alt="GOUNI Logo"
-            className="w-24 h-24 mb-4"
+            className="w-16 h-16 mb-2"
           />
-          <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">
+          <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
             Godfrey Okoye University, Enugu
           </h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1 italic">
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[9px] mt-0.5 italic">
             Office of the Registrar (Academic Affairs)
           </p>
-          <div className="mt-6 bg-slate-100 text-slate-900 border border-slate-300 px-8 py-2 rounded-full text-xs font-black uppercase tracking-widest">
+          <div className="mt-4 bg-slate-100 text-slate-900 border border-slate-300 px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
             Statement of Academic Result
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-y-8 gap-x-12 mb-12">
-          <div className="border-l-4 border-slate-200 pl-4">
-            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+        <div className="grid grid-cols-2 gap-y-4 gap-x-8 mb-6">
+          <div className="border-l-2 border-slate-200 pl-3">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Student Name
             </label>
-            <p className="text-lg font-black text-slate-900 uppercase leading-none">
+            <p className="text-sm font-black text-slate-900 uppercase leading-none">
               {user.name}
             </p>
           </div>
-          <div className="border-l-4 border-slate-200 pl-4">
-            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+          <div className="border-l-2 border-slate-200 pl-3">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Matriculation Number
             </label>
-            <p className="text-lg font-mono font-black text-slate-900 tracking-tighter leading-none">
+            <p className="text-sm font-mono font-black text-slate-900 tracking-tighter leading-none">
               {user.regNumber}
             </p>
           </div>
-          <div className="border-l-4 border-slate-200 pl-4">
-            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+          <div className="border-l-2 border-slate-200 pl-3">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Program of Study
             </label>
-            <p className="text-md font-bold text-slate-700 leading-none">
+            <p className="text-xs font-bold text-slate-700 leading-none">
               {user.prog}
             </p>
           </div>
-          <div className="border-l-4 border-slate-200 pl-4">
-            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+          <div className="border-l-2 border-slate-200 pl-3">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Session / Semester
             </label>
-            <p className="text-md font-bold text-slate-700 leading-none">
+            <p className="text-xs font-bold text-slate-700 leading-none">
               {sessionParam} — {semesterParam}
             </p>
           </div>
         </div>
 
-        <div className="border-2 border-slate-900 rounded-xl overflow-hidden mb-12">
+        <div className="border border-slate-900 rounded-xl overflow-hidden mb-8">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-slate-900">
-                <th className="py-3 px-4 text-left text-[10px] font-black uppercase text-white border-r border-slate-700 w-24">
+                <th className="py-2 px-3 text-left text-[9px] font-black uppercase text-white border-r border-slate-700 w-20">
                   Course Code
                 </th>
-                <th className="py-3 px-4 text-left text-[10px] font-black uppercase text-white border-r border-slate-700">
+                <th className="py-2 px-3 text-left text-[9px] font-black uppercase text-white border-r border-slate-700">
                   Course Title
                 </th>
-                <th className="py-3 px-4 text-center text-[10px] font-black uppercase text-white border-r border-slate-700 w-16">
+                <th className="py-2 px-3 text-center text-[9px] font-black uppercase text-white border-r border-slate-700 w-12">
                   Units
                 </th>
-                <th className="py-3 px-4 text-center text-[10px] font-black uppercase text-white border-r border-slate-700 w-16">
+                <th className="py-2 px-3 text-center text-[9px] font-black uppercase text-white border-r border-slate-700 w-12">
                   CA
                 </th>
-                <th className="py-3 px-4 text-center text-[10px] font-black uppercase text-white border-r border-slate-700 w-16">
+                <th className="py-2 px-3 text-center text-[9px] font-black uppercase text-white border-r border-slate-700 w-12">
                   Exam
                 </th>
-                <th className="py-3 px-4 text-center text-[10px] font-black uppercase text-white border-r border-slate-700 w-16">
+                <th className="py-2 px-3 text-center text-[9px] font-black uppercase text-white border-r border-slate-700 w-12">
                   Total
                 </th>
-                <th className="py-3 px-4 text-center text-[10px] font-black uppercase text-white w-16">
+                <th className="py-2 px-3 text-center text-[9px] font-black uppercase text-white w-14">
                   Grade
                 </th>
               </tr>
@@ -195,58 +194,63 @@ export default function ResultPrintContent() {
             <tbody className="divide-y divide-slate-200">
               {results.map((r: any, i: number) => (
                 <tr key={i} className="bg-white">
-                  <td className="py-3 px-4 text-sm font-bold text-slate-900 font-mono border-r border-slate-200">
+                  <td className="py-1.5 px-3 text-xs font-bold text-slate-900 font-mono border-r border-slate-200">
                     {r.code}
                   </td>
-                  <td className="py-3 px-4 text-sm font-bold text-slate-700 border-r border-slate-200">
+                  <td className="py-1.5 px-3 text-xs font-bold text-slate-700 border-r border-slate-200 truncate max-w-[200px]">
                     {r.title}
                   </td>
-                  <td className="py-3 px-4 text-sm font-black text-slate-900 text-center border-r border-slate-200">
+                  <td className="py-1.5 px-3 text-xs font-black text-slate-900 text-center border-r border-slate-200">
                     {r.units}
                   </td>
-                  <td className="py-3 px-4 text-sm font-bold text-slate-600 text-center border-r border-slate-200">
+                  <td className="py-1.5 px-3 text-xs font-bold text-slate-600 text-center border-r border-slate-200">
                     {r.ca}
                   </td>
-                  <td className="py-3 px-4 text-sm font-bold text-slate-600 text-center border-r border-slate-200">
+                  <td className="py-1.5 px-3 text-xs font-bold text-slate-600 text-center border-r border-slate-200">
                     {r.exam}
                   </td>
-                  <td className="py-3 px-4 text-sm font-black text-slate-900 text-center border-r border-slate-200">
+                  <td className="py-1.5 px-3 text-xs font-black text-slate-900 text-center border-r border-slate-200">
                     {r.total}
                   </td>
                   <td
-                    className={`py-3 px-4 text-sm font-black text-center ${!r.published ? "text-amber-600 text-[10px]" : "text-slate-900"}`}>
+                    className={`py-1.5 px-3 text-xs font-black text-center ${!r.published ? "text-amber-600 text-[8px]" : "text-slate-900"}`}>
                     {r.grade}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="bg-slate-50 p-4 border-t-2 border-slate-900 flex justify-end gap-12">
+          <div className="bg-slate-50 p-3 border-t border-slate-900 flex justify-end gap-8">
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">
-                Total Units Registered
+              <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest mb-0.5">
+                Total Units
               </p>
-              <p className="text-2xl font-black text-slate-900">{totalUnits}</p>
+              <p className="text-lg font-black text-slate-900">{totalUnits}</p>
             </div>
-            <div className="text-right border-l-2 border-slate-300 pl-12">
-              <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">
+            <div className="text-right border-l border-slate-300 pl-8">
+              <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest mb-0.5">
                 Semester GPA
               </p>
-              <p className="text-2xl font-black text-slate-900">{gpa}</p>
+              <p className="text-lg font-black text-slate-900">{gpa}</p>
             </div>
           </div>
         </div>
 
-        <div className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <div className="text-center text-[8px] font-bold text-slate-400 uppercase tracking-widest">
           Any alteration or erasure renders this document invalid. This is an
           electronically generated statement.
         </div>
       </div>
       <style jsx global>{`
         @media print {
+          @page {
+            margin: 0.5cm;
+          }
           body {
             background: white !important;
             padding: 0 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
           .max-w-4xl {
             max-width: 100% !important;

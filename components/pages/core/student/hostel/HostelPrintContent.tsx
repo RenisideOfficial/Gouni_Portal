@@ -35,42 +35,42 @@ export default function HostelPrintContent() {
     );
 
   return (
-    <div className="min-h-screen bg-slate-50 print:bg-white pb-20 font-sans">
-      <div className="max-w-3xl mx-auto pt-8 px-4 print:hidden flex justify-between items-center mb-6">
+    <div className="min-h-screen bg-slate-50 print:bg-white pb-10 font-sans">
+      <div className="max-w-3xl mx-auto pt-6 px-4 print:hidden flex justify-between items-center mb-4">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-slate-600 font-bold hover:text-blue-900 transition-colors">
-          <ArrowLeft size={18} /> Back
+          <ArrowLeft size={16} /> Back
         </button>
         <button
           onClick={() => window.print()}
-          className="bg-blue-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-2 shadow-xl hover:bg-blue-800 transition-all">
-          <Printer size={18} /> Print Allocation Card
+          className="bg-blue-900 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2 shadow-xl hover:bg-blue-800 transition-all">
+          <Printer size={16} /> Print Allocation Card
         </button>
       </div>
 
-      <div className="max-w-3xl mx-auto bg-white shadow-2xl print:shadow-none border-2 border-slate-100 p-8 sm:p-12 rounded-[2.5rem] print:rounded-none relative overflow-hidden">
+      <div className="max-w-3xl mx-auto bg-white shadow-2xl print:shadow-none border-2 border-slate-100 p-6 sm:p-10 rounded-3xl print:rounded-none relative overflow-hidden">
         {/* Header */}
-        <div className="flex justify-between items-start border-b-4 border-blue-900 pb-6 mb-8">
-          <div className="flex items-center gap-4">
+        <div className="flex justify-between items-start border-b-2 border-blue-900 pb-4 mb-6">
+          <div className="flex items-center gap-3">
             <img
               src="/images/gouni_logo.svg"
               alt="GOUNI Logo"
-              className="w-20 h-20"
+              className="w-14 h-14"
             />
             <div>
-              <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
+              <h1 className="text-xl font-black text-slate-900 uppercase tracking-tighter">
                 Godfrey Okoye University
               </h1>
-              <p className="text-blue-600 font-bold uppercase tracking-widest text-[10px] mt-1">
+              <p className="text-blue-600 font-bold uppercase tracking-widest text-[9px] mt-0.5">
                 Hostel Allocation Card
               </p>
             </div>
           </div>
-          {/* PROFILE PICTURE */}
-          <div className="w-28 h-32 border-4 border-slate-100 rounded-xl overflow-hidden shadow-sm">
+          {/* PROFILE PICTURE - DYNAMIC */}
+          <div className="w-20 h-24 border-2 border-slate-100 rounded-lg overflow-hidden shadow-sm bg-slate-100">
             <img
-              src="/images/chinweike.jpg"
+              src={user.avatar || "/images/user_image.jpg"}
               alt="Student Profile"
               className="w-full h-full object-cover"
             />
@@ -78,87 +78,87 @@ export default function HostelPrintContent() {
         </div>
 
         {/* Student & Booking Info */}
-        <div className="grid grid-cols-2 gap-8 mb-10">
+        <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Full Name
             </label>
-            <p className="text-xl font-black text-slate-900 uppercase">
+            <p className="text-base font-black text-slate-900 uppercase">
               {user.name}
             </p>
           </div>
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Matriculation Number
             </label>
-            <p className="text-xl font-mono font-black text-blue-900">
+            <p className="text-base font-mono font-black text-blue-900">
               {user.regNumber}
             </p>
           </div>
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Program / Level
             </label>
-            <p className="text-md font-bold text-slate-700">
+            <p className="text-xs font-bold text-slate-700">
               {user.prog} • {user.level || "100L"}
             </p>
           </div>
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+            <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">
               Allocation Ref
             </label>
-            <p className="text-md font-mono font-bold text-slate-700">
+            <p className="text-xs font-mono font-bold text-slate-700">
               {booking.id}
             </p>
           </div>
         </div>
 
         {/* Allocation Details Banner */}
-        <div className="bg-blue-50 border-2 border-blue-100 rounded-3xl p-6 flex items-center justify-between mb-12">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-blue-900 rounded-2xl flex items-center justify-center text-white">
-              <Home size={28} />
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-900 rounded-xl flex items-center justify-center text-white">
+              <Home size={20} />
             </div>
             <div>
-              <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">
+              <p className="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-0.5">
                 Assigned Residency
               </p>
-              <h2 className="text-2xl font-black text-blue-950">
+              <h2 className="text-lg font-black text-blue-950">
                 {booking.hostel}
               </h2>
-              <p className="text-sm font-bold text-blue-800">
+              <p className="text-xs font-bold text-blue-800">
                 {booking.block} — {booking.room} ({booking.bunk})
               </p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">
+            <p className="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-0.5">
               Term
             </p>
-            <p className="text-sm font-bold text-blue-900">{booking.session}</p>
-            <p className="text-sm font-bold text-blue-900">
+            <p className="text-xs font-bold text-blue-900">{booking.session}</p>
+            <p className="text-xs font-bold text-blue-900">
               {booking.semester}
             </p>
           </div>
         </div>
 
         {/* Signatures */}
-        <div className="grid grid-cols-2 gap-20 mt-12 px-4">
+        <div className="grid grid-cols-2 gap-12 mt-8 px-2">
           <div className="text-center">
-            <div className="h-px bg-slate-300 mb-4" />
-            <p className="text-[10px] font-black uppercase text-slate-900 mb-1">
+            <div className="h-px bg-slate-300 mb-2" />
+            <p className="text-[8px] font-black uppercase text-slate-900 mb-1">
               Student's Signature & Date
             </p>
           </div>
           <div className="text-center">
-            <div className="h-px bg-slate-300 mb-4" />
-            <p className="text-[10px] font-black uppercase text-slate-900 mb-1">
+            <div className="h-px bg-slate-300 mb-2" />
+            <p className="text-[8px] font-black uppercase text-slate-900 mb-1">
               Hall Warden's Signature & Stamp
             </p>
           </div>
         </div>
 
-        <div className="mt-12 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 pt-6">
+        <div className="mt-8 text-center text-[8px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-100 pt-4">
           This card must be presented upon entry into the university hostel
           premises.
         </div>
@@ -166,9 +166,14 @@ export default function HostelPrintContent() {
 
       <style jsx global>{`
         @media print {
+          @page {
+            margin: 0.5cm;
+          }
           body {
             background: white !important;
             padding: 0 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
           .max-w-3xl {
             max-width: 100% !important;

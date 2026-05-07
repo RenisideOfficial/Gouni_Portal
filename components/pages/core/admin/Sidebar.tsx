@@ -1,4 +1,3 @@
-// src/components/pages/core/admin/Sidebar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
-  UserPlus,
   Users,
   GraduationCap,
   CreditCard,
@@ -24,43 +22,61 @@ interface SidebarProps {
 
 const navLinks = [
   { name: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
-  { name: "Staff Mgmt", href: "/dashboard/admin/staff", icon: Users },
   {
-    name: "Student Mgmt",
+    name: "Student Management",
     href: "/dashboard/admin/students",
     icon: GraduationCap,
+  },
+  { name: "Staff Management", href: "/dashboard/admin/staff", icon: Users },
+  {
+    name: "Course Management",
+    href: "/dashboard/admin/courses",
+    icon: BookOpen,
   },
   {
     name: "Finances & Fees",
     href: "/dashboard/admin/finances",
     icon: CreditCard,
   },
-  { name: "Courses", href: "/dashboard/admin/courses", icon: BookOpen },
 ];
+
+export interface AdminUserType {
+  name: string;
+  roleLevel: string;
+  avatar?: string; // Optinal field
+}
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const pathname = usePathname();
 
-  // State to hold the dynamically fetched admin user data
-  const [adminUser, setAdminUser] = useState<{
-    name: string;
-    roleLevel: string;
-  } | null>(null);
+  // Explicit type for admin user state
+  const [adminUser, setAdminUser] = useState<AdminUserType | null>(null);
 
-  // Fixed: Wrapped in setTimeout to prevent synchronous cascading renders
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const storedUser = localStorage.getItem("gouni_current_user");
-      if (storedUser) {
-        try {
-          setAdminUser(JSON.parse(storedUser));
-        } catch (error) {
-          console.error("Failed to parse current user data", error);
-        }
+  // Logic to load user data from storage
+  const loadUser = () => {
+    const storedUser = localStorage.getItem("gouni_current_user");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser) as AdminUserType;
+        setAdminUser(parsed);
+      } catch (error) {
+        console.error("Failed to parse current user data", error);
       }
-    }, 0);
+    }
+  };
 
-    return () => clearTimeout(timer); // Cleanup
+  useEffect(() => {
+    // 1. Initial Load (deferred briefly)
+    const timer = setTimeout(loadUser, 100);
+
+    // 2. Event Listener for Storage Changes (Profile update)
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      // Cleanup
+      clearTimeout(timer);
+      window.removeEventListener("storage", loadUser);
+    };
   }, []);
 
   return (
@@ -92,15 +108,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </span>
         </div>
 
+        {/* Profile Summary - Dynamic Avatar */}
         <div className="p-6 flex flex-col items-center border-b border-border/50 flex-shrink-0">
-          <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 overflow-hidden mb-3">
-            <img
-              src="/images/admin_login_bg.jpg"
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <h3 className="font-bold text-foreground text-center">
+          <Link href="/dashboard/admin/profile" onClick={onClose}>
+            <div className="w-20 h-20 rounded-full border-4 border-blue-50 dark:border-blue-900/30 bg-muted flex items-center justify-center shadow-inner overflow-hidden mb-3 hover:opacity-80 transition-all cursor-pointer">
+              <img
+                src={adminUser?.avatar || "/images/admin_login_bg.jpg"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </Link>
+          <h3 className="font-bold text-foreground text-center line-clamp-1">
             {adminUser ? adminUser.name : "Loading..."}
           </h3>
           <span className="text-xs text-muted-foreground mt-1">
