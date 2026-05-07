@@ -1,9 +1,9 @@
-// src/components/pages/auth/Login.tsx
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, Variants, AnimatePresence } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import ActivationModal from "./ActivationModal";
 
 type Role = "student" | "staff" | "admin";
@@ -24,6 +24,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Dynamic configuration based on SRS User Classes
   const roleConfig = {
@@ -60,82 +61,95 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
-    // Fetch users from our simulated LocalStorage Database
-    const users = JSON.parse(localStorage.getItem("gouni_users") || "[]");
+    // Simulate Network Latency for HCI Feedback
+    setTimeout(() => {
+      // Fetch users from our simulated LocalStorage Database
+      const users = JSON.parse(localStorage.getItem("gouni_users") || "[]");
 
-    // Find a user that matches the identifier, password, and active role tab
-    let user = users.find(
-      (u: any) =>
-        (u.email?.toLowerCase() === identifier.toLowerCase() ||
-          u.regNumber?.toLowerCase() === identifier.toLowerCase() ||
-          u.staffId?.toLowerCase() === identifier.toLowerCase() ||
-          u.adminId?.toLowerCase() === identifier.toLowerCase()) &&
-        u.password === password &&
-        u.role === activeRole,
-    );
+      // Find a user that matches the identifier, password, and active role tab
+      let user = users.find(
+        (u: any) =>
+          (u.email?.toLowerCase() === identifier.toLowerCase() ||
+            u.regNumber?.toLowerCase() === identifier.toLowerCase() ||
+            u.staffId?.toLowerCase() === identifier.toLowerCase() ||
+            u.adminId?.toLowerCase() === identifier.toLowerCase()) &&
+          u.password === password &&
+          u.role === activeRole,
+      );
 
-    // Fallbacks for the demo
-    if (!user) {
-      if (
-        activeRole === "admin" &&
-        identifier.toLowerCase() === "admin" &&
-        password === "admin"
-      ) {
-        user = { role: "admin", name: "System Admin", id: "GOU/ADMIN/001" };
-      } else if (
-        activeRole === "staff" &&
-        identifier.toLowerCase() === "staff" &&
-        password === "staff"
-      ) {
-        user = { role: "staff", name: "Dr. Emeka", id: "GOU/STAFF/045" };
-      } else if (
-        activeRole === "student" &&
-        identifier.toLowerCase() === "student" &&
-        password === "student"
-      ) {
-        user = {
-          role: "student",
-          name: "Demo Student",
-          regNumber: "GOU/U24/DEMO",
-          status: "Active",
-          isActivated: true,
-        };
-      }
-    }
-
-    if (user) {
-      // Logic guards for Student Accounts
-      if (user.role === "student") {
-        if (user.status === "Pending") {
-          setError("Your application is still pending administrator approval.");
-          return;
-        }
-        if (user.status === "Rejected") {
-          setError(
-            "Your application has been rejected. Please contact admissions.",
-          );
-          return;
-        }
-        if (user.status === "Suspended") {
-          setError(
-            "Your portal access has been suspended. Please contact the ICT Directorate.",
-          );
-          return;
-        }
-        if (!user.isActivated && user.activationToken) {
-          setError("You must activate your account first before logging in.");
-          setActivationModalOpen(true);
-          return;
+      // Fallbacks for the demo
+      if (!user) {
+        if (
+          activeRole === "admin" &&
+          identifier.toLowerCase() === "admin" &&
+          password === "admin"
+        ) {
+          user = { role: "admin", name: "System Admin", id: "GOU/ADMIN/001" };
+        } else if (
+          activeRole === "staff" &&
+          identifier.toLowerCase() === "staff" &&
+          password === "staff"
+        ) {
+          user = { role: "staff", name: "Dr. Emeka", id: "GOU/STAFF/045" };
+        } else if (
+          activeRole === "student" &&
+          identifier.toLowerCase() === "student" &&
+          password === "student"
+        ) {
+          user = {
+            role: "student",
+            name: "Demo Student",
+            regNumber: "GOU/U24/DEMO",
+            status: "Active",
+            isActivated: true,
+          };
         }
       }
 
-      // Create session and redirect
-      localStorage.setItem("gouni_current_user", JSON.stringify(user));
-      router.push(`/dashboard/${activeRole}`);
-    } else {
-      setError("Invalid credentials. Please check your ID and Password.");
-    }
+      if (user) {
+        // Logic guards for Student Accounts
+        if (user.role === "student") {
+          if (user.status === "Pending") {
+            setError(
+              "Your application is still pending administrator approval.",
+            );
+            setIsLoading(false);
+            return;
+          }
+          if (user.status === "Rejected") {
+            setError(
+              "Your application has been rejected. Please contact admissions.",
+            );
+            setIsLoading(false);
+            return;
+          }
+          if (user.status === "Suspended") {
+            setError(
+              "Your portal access has been suspended. Please contact the ICT Directorate.",
+            );
+            setIsLoading(false);
+            return;
+          }
+          if (!user.isActivated && user.activationToken) {
+            setError("You must activate your account first before logging in.");
+            setActivationModalOpen(true);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Create session and redirect
+        localStorage.setItem("gouni_current_user", JSON.stringify(user));
+        router.push(`/dashboard/${activeRole}`);
+        // We purposely do not set isLoading(false) here so the button stays in the
+        // loading state while the router transitions to the new page.
+      } else {
+        setError("Invalid credentials. Please check your ID and Password.");
+        setIsLoading(false);
+      }
+    }, 1500); // 1.5 seconds simulated delay
   };
 
   return (
@@ -195,12 +209,13 @@ const Login = () => {
                 <button
                   key={role}
                   type="button"
+                  disabled={isLoading}
                   onClick={() => {
                     setActiveRole(role);
                     setError("");
                     setSuccessMessage("");
                   }}
-                  className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider relative z-10 transition-colors ${activeRole === role ? "text-white" : "text-muted-foreground"}`}>
+                  className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider relative z-10 transition-colors ${activeRole === role ? "text-white" : "text-muted-foreground"} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}>
                   {role}
                 </button>
               ))}
@@ -272,10 +287,11 @@ const Login = () => {
                 <input
                   type="text"
                   required
+                  disabled={isLoading}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder={roleConfig[activeRole].idPlaceholder}
-                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all placeholder:text-muted-foreground"
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all placeholder:text-muted-foreground disabled:opacity-50"
                 />
               </div>
 
@@ -287,15 +303,17 @@ const Login = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     required
+                    disabled={isLoading}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all tracking-widest placeholder:tracking-normal placeholder:text-muted-foreground"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:ring-2 focus:ring-blue-900 dark:focus:ring-blue-500 outline-none transition-all tracking-widest placeholder:tracking-normal placeholder:text-muted-foreground disabled:opacity-50"
                   />
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="20"
@@ -322,7 +340,8 @@ const Login = () => {
                 <label className="flex items-center gap-2 cursor-pointer group">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded border-input text-blue-900 focus:ring-blue-900"
+                    disabled={isLoading}
+                    className="w-4 h-4 rounded border-input text-blue-900 focus:ring-blue-900 disabled:opacity-50"
                   />
                   <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                     Remember me
@@ -336,11 +355,19 @@ const Login = () => {
               </div>
 
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={!isLoading ? { scale: 1.02 } : {}}
+                whileTap={!isLoading ? { scale: 0.98 } : {}}
                 type="submit"
-                className="w-full py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 transition-colors mt-4">
-                Sign In to Portal
+                disabled={isLoading}
+                className="w-full py-3.5 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-bold shadow-md hover:bg-blue-800 disabled:opacity-70 disabled:cursor-not-allowed transition-colors mt-4 flex justify-center items-center gap-2">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />{" "}
+                    Authenticating...
+                  </>
+                ) : (
+                  "Sign In to Portal"
+                )}
               </motion.button>
             </motion.form>
 
@@ -354,11 +381,12 @@ const Login = () => {
                   First time here?{" "}
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => {
                       setError("");
                       setActivationModalOpen(true);
                     }}
-                    className="text-blue-700 dark:text-blue-400 font-bold hover:underline focus:outline-none">
+                    className="text-blue-700 dark:text-blue-400 font-bold hover:underline focus:outline-none disabled:opacity-50">
                     Activate Account
                   </button>
                 </motion.div>
