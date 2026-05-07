@@ -75,13 +75,13 @@ git clone https://github.com/RenisideOfficial/gouni-portal.git
 **2. Install dependencies**
 
 ```bash
-npm install
+pnpm install
 ```
 
 **3. Run the development server**
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 **4. Open in browser**
